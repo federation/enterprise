@@ -1,0 +1,33 @@
+{
+  "name": "enterprise",
+  "version": "0.0.1",
+  "main": "lib/index",
+  "types": "lib/index.d.ts",
+  "repository": "https://github.com/federation/enterprise",
+  "author": "Jorge Israel Peña <jorge.israel.p@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node lib/index.js",
+    "build": "tsc",
+    "test": "jest",
+    "docs": "typedoc --out docs/ lib/",
+    "lint": "tslint -c ./tslint.json './src/**/*.{ts,tsx}'",
+    "start:live": "yarn run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts"
+  },
+  "dependencies": {
+    "koa": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/koa": "^2.0.45",
+    "@types/node": "^10.0.0",
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.3",
+    "ts-jest": "^22.4.5",
+    "ts-node": "^6.0.1",
+    "tslint": "^5.9.1",
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.3"
+  }
+}
