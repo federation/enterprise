@@ -15,4 +15,7 @@ module.exports = {
     "json",
     "node"
   ],
+  "collectCoverageFrom": [
+    "src/**"
+  ]
 };

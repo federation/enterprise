@@ -12,4 +12,4 @@ install:
   - docker build --target builder -t blaenk/enterprise-api .
 
 script:
-  - docker run blaenk/enterprise-api yarn test --colors
+  - docker run blaenk/enterprise-api yarn run coverage
