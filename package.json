@@ -1,9 +1,9 @@
 {
-  "name": "enterprise",
+  "name": "enterprise-api",
   "version": "0.0.1",
   "main": "lib/index",
   "types": "lib/index.d.ts",
-  "repository": "https://github.com/federation/enterprise",
+  "repository": "https://github.com/federation/enterprise-api",
   "author": "Jorge Israel Peña <jorge.israel.p@gmail.com>",
   "license": "MIT",
   "scripts": {
