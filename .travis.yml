@@ -1,6 +1,6 @@
 sudo: required
 
-language: bash
+language: generic
 
 services:
   - docker
@@ -16,4 +16,4 @@ script:
   - docker run -v "$PWD/coverage:/usr/src/app/coverage" blaenk/enterprise-api yarn run coverage
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -v -s coverage
+  - bash <(curl -s https://codecov.io/bash) -s coverage
