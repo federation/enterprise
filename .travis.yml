@@ -12,6 +12,9 @@ install:
   - docker build --target builder -t blaenk/enterprise-api .
 
 script:
-  # Pass CI's environment variables into docker.
-  - ci_env=`bash <(curl -s https://codecov.io/env)`
-  - docker run $ci_env blaenk/enterprise-api yarn run coverage
+  - docker run blaenk/enterprise-api yarn run coverage
+
+after_success:
+  - mkdir coverage
+  - docker run -v "$PWD/coverage:/usr/src/app/coverage" blaenk/enterprise-api yarn run codecov
+  - bash <(curl -s https://codecov.io/bash)
