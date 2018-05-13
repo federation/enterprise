@@ -12,9 +12,8 @@ install:
   - docker build --target builder -t blaenk/enterprise-api .
 
 script:
-  - docker run blaenk/enterprise-api yarn run coverage
+  - mkdir coverage
+  - docker run -v "$PWD/coverage:/usr/src/app/coverage" blaenk/enterprise-api yarn run coverage
 
 after_success:
-  - mkdir coverage
-  - docker run -v "$PWD/coverage:/usr/src/app/coverage" blaenk/enterprise-api yarn run codecov
   - bash <(curl -s https://codecov.io/bash)
