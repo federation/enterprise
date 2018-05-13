@@ -14,6 +14,4 @@ install:
 script:
   - mkdir coverage
   - docker run -v "$PWD/coverage:/usr/src/app/coverage" blaenk/enterprise-api yarn run coverage
-
-after_success:
   - bash <(curl -s https://codecov.io/bash)
