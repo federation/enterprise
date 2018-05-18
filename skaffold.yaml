@@ -4,16 +4,16 @@ build:
   tagPolicy:
     sha256: {}
   artifacts:
-  - imageName: blaenk/enterprise-api
+  - imageName: blaenk/enterprise
 deploy:
   helm:
     releases:
-    - name: enterprise-api
+    - name: enterprise
       chartPath: chart
       namespace: default
       #valuesFilePath: helm-skaffold-values.yaml
       values:
-        imageName: blaenk/enterprise-api
+        imageName: blaenk/enterprise
       #setValues get appended to the helm deploy with --set.
       #setValues:
         #some.key: someValue

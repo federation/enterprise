@@ -1,22 +1,22 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "enterprise-api.fullname" . }}
+  name: {{ template "enterprise.fullname" . }}
   labels:
-    app: {{ template "enterprise-api.name" . }}
-    chart: {{ template "enterprise-api.chart" . }}
+    app: {{ template "enterprise.name" . }}
+    chart: {{ template "enterprise.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "enterprise-api.name" . }}
+      app: {{ template "enterprise.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "enterprise-api.name" . }}
+        app: {{ template "enterprise.name" . }}
         release: {{ .Release.Name }}
     spec:
       containers:

@@ -1,11 +1,11 @@
-# Default values for enterprise-api.
+# Default values for enterprise.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: blaenk/enterprise-api
+  repository: blaenk/enterprise
   tag: latest
   pullPolicy: IfNotPresent
 

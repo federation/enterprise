@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "enterprise-api.fullname" . }}
+  name: {{ template "enterprise.fullname" . }}
   labels:
-    app: {{ template "enterprise-api.name" . }}
-    chart: {{ template "enterprise-api.chart" . }}
+    app: {{ template "enterprise.name" . }}
+    chart: {{ template "enterprise.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "enterprise-api.name" . }}
+    app: {{ template "enterprise.name" . }}
     release: {{ .Release.Name }}

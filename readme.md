@@ -13,7 +13,7 @@ $ skaffold dev
 
 # Open a browser to the service endpoint.
 # Pass --url to only get the url.
-$ minikube service enterprise-api
+$ minikube service enterprise
 ```
 
 ## Dependencies
