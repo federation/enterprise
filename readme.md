@@ -20,10 +20,10 @@ $ skaffold dev
 $ minikube service enterprise
 ```
 
-## Dependencies
+### Development Environment Dependencies
 
-* docker
-* kubectl
-* minikube
-* helm
-* skaffold
+* [docker](https://www.docker.com/)
+* [kubectl](https://github.com/kubernetes/kubectl)
+* [minikube](https://github.com/kubernetes/minikube)
+* [helm](https://helm.sh/)
+* [skaffold](https://github.com/GoogleContainerTools/skaffold)
