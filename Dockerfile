@@ -15,8 +15,8 @@ FROM dependencies AS builder
 # since they depend on package.json and yarn.lock, not the source files.
 RUN yarn install --frozen-lockfile
 
-COPY tsconfig.json ./
 COPY src/ ./src/
+COPY tsconfig.json ./
 
 RUN yarn run build
 
