@@ -19,7 +19,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) -s coverage
 
 before_deploy:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t fedtech/enterprise:latest .
 
 deploy:
