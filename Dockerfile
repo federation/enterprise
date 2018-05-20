@@ -2,7 +2,8 @@
 FROM node:10.1.0-alpine AS dependencies
 WORKDIR /usr/src/app
 
-COPY package.json yarn.lock ./
+COPY package.json ./
+COPY yarn.lock ./
 
 # Install dependencies in a reproducible manner
 RUN yarn install --frozen-lockfile --production
