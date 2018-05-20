@@ -6,9 +6,10 @@ services:
 
 before_install:
   - docker --version
+  - docker pull fedtech/enterprise:latest || true
 
 install:
-  - docker build --target builder -t fedtech/enterprise:test .
+  - docker build --pull --cache-from fedtech/enterprise:latest --target builder -t fedtech/enterprise:test .
 
 script:
   - mkdir coverage
