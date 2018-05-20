@@ -17,6 +17,13 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -s coverage
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+before_deploy:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t fedtech/enterprise:latest .
-  - docker push fedtech/enterprise:latest
+
+deploy:
+  provider: script
+  script: docker push fedtech/enterprise:latest
+  on:
+    branch: master
