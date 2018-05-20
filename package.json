@@ -11,7 +11,7 @@
     "build": "tsc",
     "test": "jest",
     "coverage": "jest --coverage --colors",
-    "docs": "typedoc --out docs/ lib/",
+    "docs": "typedoc --out docs/ src/",
     "lint": "tslint -c ./tslint.json --project .",
     "start:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
