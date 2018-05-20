@@ -20,7 +20,7 @@ after_success:
 
 before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t fedtech/enterprise:latest .
+  - docker build --cache-from fedtech/enterprise:test -t fedtech/enterprise:latest .
 
 deploy:
   skip_cleanup: true
