@@ -6,25 +6,30 @@ services:
 
 before_install:
   - docker --version
-  - docker pull fedtech/enterprise:latest || true
+  - docker pull fedtech/enterprise:builder || true
 
 install:
-  - docker build --pull --cache-from fedtech/enterprise:latest --target builder -t fedtech/enterprise:test .
+  - docker build --pull --cache-from fedtech/enterprise:builder --target builder -t fedtech/enterprise:builder .
 
 script:
   - mkdir coverage
-  - docker run -v "$PWD/coverage:/usr/src/app/coverage" fedtech/enterprise:test yarn run coverage
+  - docker run -v "$PWD/coverage:/usr/src/app/coverage" fedtech/enterprise:builder yarn run coverage
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -s coverage
 
 before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build --cache-from fedtech/enterprise:test -t fedtech/enterprise:latest .
+  - docker build --cache-from fedtech/enterprise:builder -t fedtech/enterprise:latest .
 
 deploy:
-  skip_cleanup: true
-  provider: script
-  script: docker push fedtech/enterprise:latest
-  on:
-    branch: master
+  - provider: script
+    skip_cleanup: true
+    script: docker push fedtech/enterprise:builder
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: docker push fedtech/enterprise:latest
+    on:
+      branch: master
