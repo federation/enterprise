@@ -4,6 +4,24 @@
 
 ## Development
 
+### Docker Compose
+
+Simply run `docker-compose up` to initiate each necessary service.
+
+The `scripts/psql.sh` script initiates a psql connection to the PostgreSQL database.
+
+### Kubernetes
+
+These tools are required to develop on locally on kubernetes:
+
+* [docker](https://www.docker.com/)
+* [kubectl](https://github.com/kubernetes/kubectl)
+* [minikube](https://github.com/kubernetes/minikube)
+* [helm](https://helm.sh/)
+* [skaffold](https://github.com/GoogleContainerTools/skaffold)
+
+The general flow is:
+
 ``` shell
 # Create a minikube cluster.
 $ minikube start
@@ -19,11 +37,3 @@ $ skaffold dev
 # Pass --url to only get the url.
 $ minikube service enterprise
 ```
-
-### Development Environment Dependencies
-
-* [docker](https://www.docker.com/)
-* [kubectl](https://github.com/kubernetes/kubectl)
-* [minikube](https://github.com/kubernetes/minikube)
-* [helm](https://helm.sh/)
-* [skaffold](https://github.com/GoogleContainerTools/skaffold)
