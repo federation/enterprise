@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  api:
+    build:
+      context: .
+      target: builder
+    image: fedtech/enterprise:dev
+    command: ["yarn", "run", "start:live"]
+    ports:
+      - '8080:8080'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    build:
+      context: ./db
+    image: fedtech/postgres:enterprise
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+  db-data:
