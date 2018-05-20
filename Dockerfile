@@ -17,7 +17,7 @@ FROM dependencies AS builder
 RUN yarn install --frozen-lockfile
 
 COPY tsconfig.json ./
-COPY src/ ./src/
+COPY src/ ./
 
 RUN yarn run build
 
@@ -26,7 +26,7 @@ RUN yarn run build
 FROM dependencies
 WORKDIR /usr/src/app
 
-COPY --from=builder /usr/src/app/build/ ./build
+COPY --from=builder /usr/src/app/build/ ./
 
 EXPOSE 8080
 
