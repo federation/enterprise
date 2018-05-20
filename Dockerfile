@@ -23,9 +23,10 @@ RUN yarn run build
 # Reset to production dependencies-only and copy the
 # compiled TypeScript application.
 FROM dependencies
+WORKDIR /usr/src/app
 
-COPY --from=builder /usr/src/app/lib/ ./lib
+COPY --from=builder /usr/src/app/build/ ./build
 
 EXPOSE 8080
 
-CMD [ "node", "lib/index.js" ]
+CMD [ "node", "./build/index.js" ]

@@ -1,13 +1,13 @@
 {
   "name": "@federation/enterprise",
   "version": "0.0.1",
-  "main": "lib/index",
-  "types": "lib/index.d.ts",
+  "main": "build/index",
+  "types": "build/index.d.ts",
   "repository": "https://github.com/federation/enterprise",
   "author": "Jorge Israel Peña <jorge.israel.p@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node lib/index.js",
+    "start": "node build/index.js",
     "build": "tsc",
     "test": "jest",
     "coverage": "jest --coverage --colors",
