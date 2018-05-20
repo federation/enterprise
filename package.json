@@ -13,8 +13,7 @@
     "coverage": "jest --coverage --colors",
     "docs": "typedoc --out docs/ lib/",
     "lint": "tslint -c ./tslint.json --project .",
-    "start:live": "yarn run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts"
+    "start:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
   },
   "dependencies": {
     "koa": "^2.5.1"
