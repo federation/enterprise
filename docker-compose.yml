@@ -14,7 +14,7 @@ services:
 
   nginx:
     build:
-      context: ./nginx
+      context: ./docker/nginx
     image: fedtech/nginx:enterprise
     ports:
       - '8000:80'
@@ -23,7 +23,7 @@ services:
 
   postgres:
     build:
-      context: ./postgres
+      context: ./docker/postgres
     image: fedtech/postgres:enterprise
     volumes:
       - db-data:/var/lib/postgresql/data

@@ -22,10 +22,12 @@ Access the service through http://localhost:8000
 
 #### Utility Scripts
 
-| Script                 | Purpose           |
-| :--                    | :--               |
-| `scripts/psql.sh`      | psql session      |
-| `scripts/redis-cli.sh` | redis-cli session |
+There are utility scripts in `docker/scripts/`.
+
+| Script         | Purpose                      |
+| :--            | :--                          |
+| `psql.sh`      | initiate a psql session      |
+| `redis-cli.sh` | initiate a redis-cli session |
 
 ### Kubernetes
 
