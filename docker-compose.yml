@@ -16,7 +16,7 @@ services:
 
   postgres:
     build:
-      context: ./db
+      context: ./postgres
     image: fedtech/postgres:enterprise
     volumes:
       - db-data:/var/lib/postgresql/data
