@@ -6,13 +6,20 @@ services:
       target: builder
     image: fedtech/enterprise:dev
     command: ["yarn", "run", "start:live"]
-    ports:
-      - '8080:8080'
     volumes:
       - .:/usr/src/app
     depends_on:
       - postgres
       - redis
+
+  nginx:
+    build:
+      context: ./nginx
+    image: fedtech/nginx:enterprise
+    ports:
+      - '8000:80'
+    volumes:
+      - "${ENTERPRISE_WEB_PATH}/static/:/usr/share/nginx/html"
 
   postgres:
     build:
