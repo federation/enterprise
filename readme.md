@@ -6,9 +6,26 @@
 
 ### Docker Compose
 
-Simply run `docker-compose up` to initiate each necessary service.
+Create a `.env` file at the root with these definitions:
 
-The `scripts/psql.sh` script initiates a psql connection to the PostgreSQL database.
+| Name                  | Value                    |
+| :--                   | :--                      |
+| `ENTERPRISE_WEB_PATH` | path to [enterprise-web] |
+
+[enterprise-web]: https://github.com/federation/enterprise-web
+
+Careful with relative paths when running docker as root.
+
+Run `docker-compose up --build` to initiate each necessary service.
+
+Access the service through http://localhost:8000
+
+#### Utility Scripts
+
+| Script                 | Purpose           |
+| :--                    | :--               |
+| `scripts/psql.sh`      | psql session      |
+| `scripts/redis-cli.sh` | redis-cli session |
 
 ### Kubernetes
 
