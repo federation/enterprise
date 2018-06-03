@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 import Koa from 'koa';
 import koaRouter from 'koa-router';
 import koaBody from 'koa-bodyparser';
