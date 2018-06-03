@@ -9,6 +9,7 @@ CREATE TABLE enterprise.user (
     name TEXT,
     email TEXT,
     password TEXT,
+    refresh_token TEXT,
 );
 
 CREATE TABLE enterprise.employer (
