@@ -1,0 +1,42 @@
+# A user.
+type User {
+  # Unique identifier for the user.
+  uuid: ID!
+
+  # The user's name.
+  name: String!
+
+  # The user's email address.
+  email: String!
+}
+
+# Information about an authenticated user.
+type AuthenticationPayload {
+  # Short-lived authentication JWT.
+  authenticationToken: String!,
+
+  # Long-lived refresh JWT.
+  refreshToken: String!,
+
+  # The authenticated user.
+  user: User!,
+}
+
+type Query {
+  # Obtain the currently authenticated user.
+  currentUser: User
+}
+
+type Mutation {
+  # Register a new user.
+  register(email: String!, password: String!, name: String!): AuthenticationPayload
+
+  # Authenticate an existing user.
+  login(email: String!, password: String!): AuthenticationPayload
+
+  # Obtain a refreshed authentication token.
+  refreshAuthenticationToken(
+    # The user's long-lived refresh token.
+    refreshToken: String!
+  ): AuthenticationPayload
+}
