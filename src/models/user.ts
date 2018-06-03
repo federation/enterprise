@@ -57,8 +57,10 @@ export class User {
     return token;
   }
 
-  static getByRefreshToken(refreshToken: string): Promise<User> {
-    return db.getUserByRefreshToken(refreshToken);
+  static async getByRefreshToken(refreshToken: string): Promise<User> {
+    const user = await db.getUserByRefreshToken(refreshToken);
+
+    return new User(user.uuid, user.name, user.email);
   }
 
   // TODO
