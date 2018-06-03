@@ -35,7 +35,7 @@ export async function getUserByEmail(email: string): Promise<any> {
 }
 
 export async function getUserByRefreshToken(refreshToken: string): Promise<any> {
-  const query = 'SELECT uuid, name, email, password FROM enterprise.users WHERE refresh_token = $1 LIMIT 1';
+  const query = 'SELECT uuid, name, email FROM enterprise.users WHERE refresh_token = $1 LIMIT 1';
   const parameters = [refreshToken];
 
   const result = await connection().query(query, parameters);
