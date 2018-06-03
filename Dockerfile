@@ -6,7 +6,9 @@ COPY package.json ./
 COPY yarn.lock ./
 
 # Install dependencies in a reproducible manner
-RUN yarn install --frozen-lockfile --production
+RUN apk add --no-cache --virtual .build-deps make gcc g++ python \
+  && yarn install --frozen-lockfile --production \
+  && apk del .build-deps
 
 # This layer further adds dev dependencies and compiles TypeScript.
 FROM dependencies AS builder
