@@ -3,26 +3,46 @@
 require('dotenv').config();
 
 import Koa from 'koa';
-import koaRouter from 'koa-router';
 import koaBody from 'koa-bodyparser';
-import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
-import {
-  graphql,
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLString
-} from 'graphql';
+import koaLogger from 'koa-logger';
+import Router from 'koa-router';
 
-import { Client } from 'pg';
+import config from './config';
+import logger from './logger';
 
-const client = new Client();
+import UserRoutes from './routes/user';
+import GraphQLRoutes from './routes/graphql';
 
-// Constants
-const PORT = 8080;
-const HOST = '0.0.0.0';
+logger.info('Starting Koa server', { host: config.host, port: config.port });
 
 const app = new Koa();
-const router = new koaRouter();
+
+app.use(koaLogger({
+  transporter: (str: any, args: any[]) => {
+    const [ , method, path, status, time, size ] = args;
+
+    if (!status) {
+      logger.info(`Requested ${method} ${path}`);
+    } else {
+      logger.info(`Responded ${method} ${path} ${status} ${time} ${size}`);
+    }
+  }
+}))
+
+async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
+  try {
+    await next();
+  } catch (err) {
+    if (err.status == 401) {
+      ctx.status = 401;
+      ctx.body = 'Protected resource';
+    } else {
+      throw err;
+    }
+  }
+}
+
+app.use(unauthenticatedHandler);
 
 app.use(koaBody({
   extendTypes: {
@@ -30,41 +50,12 @@ app.use(koaBody({
   }
 }));
 
-async function graphQLTextParser(ctx: Koa.Context, next: Function) {
-  if (ctx.request.is('application/graphql')) {
-    ctx.body = { query: ctx.request.body };
-  }
+app.use(GraphQLRoutes.routes());
+app.use(GraphQLRoutes.allowedMethods());
 
-  await next();
-}
+app.use(UserRoutes.routes());
+app.use(UserRoutes.allowedMethods());
 
-const myGraphQLSchema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'RootQueryType',
-    fields: {
-      hello: {
-        type: GraphQLString,
-        resolve() {
-          return 'world';
-        }
-      }
-    }
-  })
-});
+app.listen(config.port, config.host);
 
-router.post('/graphql', graphQLTextParser, graphqlKoa({ schema: myGraphQLSchema }));
-router.get('/graphql', graphqlKoa({ schema: myGraphQLSchema }));
-
-// NOTE
-// This endpoint should be disabled on production.
-router.get('/graphiql', graphiqlKoa({
-  endpointURL: '/graphql',
-  // passHeader: `'Authorization': 'Bearer lorem ipsum'`
-}));
-
-app.use(router.routes());
-app.use(router.allowedMethods());
-
-app.listen(PORT, HOST);
-
-console.log(`Running on http://${HOST}:${PORT}`);
+logger.info(`Running on http://${config.host}:${config.port}`);
