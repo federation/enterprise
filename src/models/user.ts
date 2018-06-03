@@ -75,12 +75,15 @@ export class User {
     }
   }
 
-  static async create(name: string, email: string, password: string): Promise<User> {
+  static normalizePassword(password: string): string {
     const sha512Hash = crypto.createHash('sha512').update(password);
     const base64Hash = sha512Hash.digest('base64')
 
-    const argon2Hash = await argon2.hash(base64Hash);
+    return base64Hash;
+  }
 
+  static async create(name: string, email: string, password: string): Promise<User> {
+    const argon2Hash = await argon2.hash(User.normalizePassword(password));
     const user = await db.createUser(name, email, argon2Hash);
 
     return new User(user.uuid, user.name, user.email);
@@ -88,7 +91,7 @@ export class User {
 
   static async authenticate(email: string, password: string): Promise<User> {
     const user = await db.getUserByEmail(email);
-    const isAuthenticated = await argon2.verify(password, user.password);
+    const isAuthenticated = await argon2.verify(User.normalizePassword(password), user.password);
 
     if (isAuthenticated) {
       return new User(user.uuid, user.name, user.email);
