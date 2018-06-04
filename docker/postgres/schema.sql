@@ -2,14 +2,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE SCHEMA enterprise;
 
-CREATE TABLE enterprise.user (
+CREATE TABLE enterprise.account (
     uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     name TEXT,
     email TEXT,
     password TEXT,
-    refresh_token TEXT,
+    refresh_token TEXT
 );
 
 CREATE TABLE enterprise.employer (
