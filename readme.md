@@ -18,6 +18,8 @@ Careful with relative paths when running docker as root.
 
 Run `docker-compose up --build` to initiate each necessary service.
 
+The database is initialized the first time the volumes are created. Named and anonymous volumes, as well as networks, can be removed along with created containers by running `docker-compose down -v`.
+
 Access the service through http://localhost:8000
 
 #### Utility Scripts
