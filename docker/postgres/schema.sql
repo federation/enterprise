@@ -89,7 +89,7 @@ CREATE TABLE enterprise.opportunity (
     notes TEXT,
 
     -- If the opportunity has ended, the result must not remain pending.
-    CONSTRAINT valid_result CHECK (status != 'ended' OR result != 'pending')
+    CONSTRAINT valid_result CHECK (NOT (status = 'ended' AND result = 'pending'))
 );
 
 -- Opportunity-related contact.
