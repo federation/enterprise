@@ -23,7 +23,6 @@ router.post('/auth/register', ...[
 
 router.post('/auth/login', ...[
   authenticateUser,
-  createRefreshToken,
   createAccessToken,
   authenticationResponse
 ]);
