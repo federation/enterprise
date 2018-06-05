@@ -25,7 +25,7 @@ export class TokenVerificationError extends Error {
 export class User {
   constructor(readonly uuid: string, readonly name: string, readonly email: string) {}
 
-  authToken(): string {
+  createAccessToken(): string {
     const payload = {
       uuid: this.uuid,
       name: this.name,

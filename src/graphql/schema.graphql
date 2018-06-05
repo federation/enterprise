@@ -13,7 +13,7 @@ type User {
 # Information about an authenticated user.
 type AuthenticationPayload {
   # Short-lived authentication JWT.
-  authenticationToken: String!,
+  accessToken: String!,
 
   # Long-lived refresh JWT.
   refreshToken: String!,
@@ -34,8 +34,8 @@ type Mutation {
   # Authenticate an existing user.
   login(email: String!, password: String!): AuthenticationPayload
 
-  # Obtain a refreshed authentication token.
-  refreshAuthenticationToken(
+  # Obtain a refreshed access token.
+  refreshAccessToken(
     # The user's long-lived refresh token.
     refreshToken: String!
   ): AuthenticationPayload

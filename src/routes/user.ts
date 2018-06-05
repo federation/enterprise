@@ -4,11 +4,11 @@ import Router from 'koa-router';
 
 import {
   registerUser,
-  createAuthenticationToken,
+  createAccessToken,
   createRefreshToken,
   authenticationResponse,
   authenticateUser,
-  verifyAuthenticationToken,
+  verifyAccessToken,
   verifyRefreshToken
 } from '../middleware/auth';
 
@@ -17,24 +17,24 @@ const router = new Router();
 router.post('/auth/register', ...[
   registerUser,
   createRefreshToken,
-  createAuthenticationToken,
+  createAccessToken,
   authenticationResponse
 ]);
 
 router.post('/auth/login', ...[
   authenticateUser,
   createRefreshToken,
-  createAuthenticationToken,
+  createAccessToken,
   authenticationResponse
 ]);
 
 router.post('/auth/refresh', ...[
   verifyRefreshToken,
-  createAuthenticationToken,
+  createAccessToken,
   authenticationResponse
 ]);
 
-router.get('/auth/guarded', verifyAuthenticationToken, (ctx) => {
+router.get('/auth/guarded', verifyAccessToken, (ctx) => {
   ctx.body = 'success';
 });
 

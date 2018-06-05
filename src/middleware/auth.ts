@@ -3,8 +3,8 @@ import { User, AuthenticationError, TokenVerificationError } from '../models/use
 import Koa from 'koa';
 import Router from 'koa-router';
 
-export function createAuthenticationToken(ctx: Koa.Context) {
-  ctx.state.authToken = ctx.state.user.authToken();
+export function createAccessToken(ctx: Koa.Context) {
+  ctx.state.accessToken = ctx.state.user.accessToken();
 }
 
 export async function createRefreshToken(ctx: Koa.Context) {
@@ -41,8 +41,8 @@ export function authenticationResponse(ctx: Koa.Context) {
     success: true,
   };
 
-  if (ctx.state.authToken) {
-    ctx.body.authToken = ctx.state.authToken;
+  if (ctx.state.accessToken) {
+    ctx.body.accessToken = ctx.state.accessToken;
   }
 
   if (ctx.state.refreshToken) {
@@ -71,7 +71,7 @@ export async function registerUser(ctx: Koa.Context) {
   }
 }
 
-export function verifyAuthenticationToken(ctx: Koa.Context) {
+export function verifyAccessToken(ctx: Koa.Context) {
   const tokenHeader = ctx.request.headers['authorization'];
 
   if (!tokenHeader) {
