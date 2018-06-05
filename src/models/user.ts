@@ -39,7 +39,7 @@ export class User {
     return jwt.sign(payload, config.jwt_secret, metadata);
   }
 
-  async refreshToken() {
+  async createRefreshToken() {
     const payload = {
       uuid: this.uuid,
       name: this.name,

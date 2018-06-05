@@ -8,7 +8,7 @@ export function createAccessToken(ctx: Koa.Context) {
 }
 
 export async function createRefreshToken(ctx: Koa.Context) {
-  ctx.state.refreshToken = await ctx.state.user.refreshToken();
+  ctx.state.refreshToken = await ctx.state.user.createRefreshToken();
 }
 
 export async function authenticateUser(ctx: Koa.Context) {
