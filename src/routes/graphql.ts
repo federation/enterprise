@@ -7,8 +7,8 @@ import Router from 'koa-router';
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
 import { makeExecutableSchema } from 'graphql-tools';
 
-import config from '../config';
 import logger from '../logger';
+import { config } from '../config';
 
 const router = new Router();
 
@@ -53,7 +53,7 @@ const graphQLOptions = {
 router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
 router.get('/graphql', graphqlKoa(graphQLOptions));
 
-if (config.NODE_ENV === 'development') {
+if (config().NODE_ENV === 'development') {
   router.get('/graphiql', graphiqlKoa({
     endpointURL: '/graphql',
     // passHeader: `'Authorization': 'Bearer lorem ipsum'`

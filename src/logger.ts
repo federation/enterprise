@@ -6,12 +6,12 @@ import logform, { format } from 'logform';
 
 import _ from 'lodash';
 
-import config from './config';
+import { config } from './config';
 
 // TODO
 // Move this to Config?
 function logPath(log: string): string {
-  return path.join(config.LOG_PATH, log);
+  return path.join(config().LOG_PATH, log);
 }
 
 const winstonLogger = winston.createLogger({
@@ -59,7 +59,7 @@ class ConsoleFormatter {
   }
 }
 
-if (config.NODE_ENV !== 'production') {
+if (config().NODE_ENV !== 'production') {
   winstonLogger.add(new winston.transports.Console({
     handleExceptions: true,
     format: format.combine(
