@@ -13,7 +13,7 @@ import logger from './logger';
 import UserRoutes from './routes/user';
 import GraphQLRoutes from './routes/graphql';
 
-logger.info('Starting Koa server', { host: config.host, port: config.port });
+logger.info('Starting Koa server', { host: config.HOST, port: config.PORT });
 
 const app = new Koa();
 
@@ -56,6 +56,6 @@ app.use(GraphQLRoutes.allowedMethods());
 app.use(UserRoutes.routes());
 app.use(UserRoutes.allowedMethods());
 
-app.listen(config.port, config.host);
+app.listen(config.PORT, config.HOST);
 
-logger.info(`Running on http://${config.host}:${config.port}`);
+logger.info(`Running on http://${config.HOST}:${config.PORT}`);

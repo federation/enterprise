@@ -11,7 +11,7 @@ import config from './config';
 // TODO
 // Move this to Config?
 function logPath(log: string): string {
-  return path.join(config.log_path, log);
+  return path.join(config.LOG_PATH, log);
 }
 
 const winstonLogger = winston.createLogger({
@@ -59,7 +59,7 @@ class ConsoleFormatter {
   }
 }
 
-if (config.node_env !== 'production') {
+if (config.NODE_ENV !== 'production') {
   winstonLogger.add(new winston.transports.Console({
     handleExceptions: true,
     format: format.combine(

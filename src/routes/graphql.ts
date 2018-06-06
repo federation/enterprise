@@ -53,7 +53,7 @@ const graphQLOptions = {
 router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
 router.get('/graphql', graphqlKoa(graphQLOptions));
 
-if (config.node_env === 'development') {
+if (config.NODE_ENV === 'development') {
   router.get('/graphiql', graphiqlKoa({
     endpointURL: '/graphql',
     // passHeader: `'Authorization': 'Bearer lorem ipsum'`

@@ -5,23 +5,23 @@ export class Config {
 
   private environment: any;
 
-  // TODO
-  // Use camelcase.
-  readonly port: number;
-  readonly host: string;
-  readonly node_env: string;
-  readonly log_path: string;
-  readonly jwt_secret: string;
+  readonly PORT: number;
+  readonly HOST: string;
+  readonly NODE_ENV: string;
+  readonly LOG_PATH: string;
+  readonly JWT_SECRET: string;
 
   constructor(environment: NodeJS.ProcessEnv) {
     this.environment = environment;
 
-    this.port = parseInt(this.env('PORT', '8080'));
-    this.host = this.env('HOST', '0.0.0.0');
-    this.node_env = this.env('NODE_ENV', 'development');
-    this.log_path = this.env('LOG_PATH', () => path.join(__dirname, '../logs'));
+    // Required
+    this.JWT_SECRET = this.env('JWT_SECRET');
 
-    this.jwt_secret = this.env('JWT_SECRET');
+    // Optional
+    this.PORT = parseInt(this.env('PORT', '8080'));
+    this.HOST = this.env('HOST', '0.0.0.0');
+    this.NODE_ENV = this.env('NODE_ENV', 'development');
+    this.LOG_PATH = this.env('LOG_PATH', () => path.join(__dirname, '../logs'));
 
     Config.instance = this;
   }

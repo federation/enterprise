@@ -36,7 +36,7 @@ export class User {
       expiresIn: '1 minute',
     };
 
-    return jwt.sign(payload, config.jwt_secret, metadata);
+    return jwt.sign(payload, config.JWT_SECRET, metadata);
   }
 
   async createRefreshToken() {
@@ -50,7 +50,7 @@ export class User {
       expiresIn: '1 month',
     };
 
-    const token = jwt.sign(payload, config.jwt_secret, metadata);
+    const token = jwt.sign(payload, config.JWT_SECRET, metadata);
 
     await db.updateUserRefreshToken(this.uuid, token);
 
@@ -67,7 +67,7 @@ export class User {
   // https://github.com/auth0/node-jsonwebtoken#errors--codes
   static verify(token: string) {
     try {
-      const user: any = jwt.verify(token, config.jwt_secret);
+      const user: any = jwt.verify(token, config.JWT_SECRET);
 
       return new User(user.uuid, user.name, user.email);
     } catch (e) {
