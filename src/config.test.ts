@@ -13,7 +13,7 @@ describe("Config", () => {
   });
 
   test('overrides defaults with environment variables', () => {
-    const envWithCustomHost = { ...RequiredOptions, ...{ HOST: '127.0.0.1' } };
+    const envWithCustomHost = { ...RequiredOptions, HOST: '127.0.0.1' };
     const config = new Config(envWithCustomHost);
 
     expect(config.HOST).not.toBe(DefaultOptions.HOST);
