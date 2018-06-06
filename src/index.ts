@@ -13,6 +13,8 @@ import { logger } from './logger';
 import UserRoutes from './routes/user';
 import GraphQLRoutes from './routes/graphql';
 
+import * as auth from './middleware/auth';
+
 logger.info('Starting Koa server', { host: config().HOST, port: config().PORT });
 
 const app = new Koa();
@@ -29,20 +31,7 @@ app.use(koaLogger({
   }
 }))
 
-async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
-  try {
-    await next();
-  } catch (err) {
-    if (err.status == 401) {
-      ctx.status = 401;
-      ctx.body = 'Protected resource';
-    } else {
-      throw err;
-    }
-  }
-}
-
-app.use(unauthenticatedHandler);
+app.use(auth.unauthenticatedHandler);
 
 app.use(koaBody({
   extendTypes: {

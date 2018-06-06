@@ -3,6 +3,19 @@ import { User, AuthenticationError, TokenVerificationError } from '../models/use
 import Koa from 'koa';
 import Router from 'koa-router';
 
+export async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
+  try {
+    await next();
+  } catch (err) {
+    if (err.status == 401) {
+      ctx.status = 401;
+      ctx.body = 'Protected resource';
+    } else {
+      throw err;
+    }
+  }
+}
+
 export function createAccessToken(ctx: Koa.Context) {
   ctx.state.accessToken = ctx.state.user.accessToken();
 }
