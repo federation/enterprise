@@ -16,9 +16,18 @@ Create a `.env` file at the root with these definitions:
 
 Careful with relative paths when running docker as root.
 
-Run `docker-compose up --build` to initiate each necessary service.
+The general flow is:
 
-The database is initialized the first time the volumes are created. Named and anonymous volumes, as well as networks, can be removed along with created containers by running `docker-compose down -v`.
+``` shell
+# Build and start each service
+# Shutdown containers with ^C
+$ docker-compose up --build
+^C
+
+# Remove all created volumes, networks, and named/anonymous volumes.
+# Causes postgres container to reinitialize database on next run.
+$ docker-compose down --volumes
+```
 
 Access the service through http://localhost:8000
 
