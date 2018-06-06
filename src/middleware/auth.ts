@@ -96,7 +96,7 @@ export function verifyAccessToken(ctx: Koa.Context) {
   // TODO
   // Ensure this terminates and prevents further middleware from executing.
   try {
-    ctx.state.user = User.verify(token);
+    ctx.state.user = User.verifyToken(token);
   } catch (e) {
     if (e instanceof TokenVerificationError) {
       ctx.response.status = 402;

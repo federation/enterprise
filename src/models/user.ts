@@ -65,7 +65,7 @@ export class User {
 
   // TODO
   // https://github.com/auth0/node-jsonwebtoken#errors--codes
-  static verify(token: string) {
+  static verifyToken(token: string) {
     try {
       const user: any = jwt.verify(token, config().JWT_SECRET);
 
