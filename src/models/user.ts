@@ -6,22 +6,6 @@ import jwt from 'jsonwebtoken';
 import * as db from '../db';
 import { config } from '../config';
 
-export class AuthenticationError extends Error {
-  constructor(m: string) {
-    super(m);
-
-    Object.setPrototypeOf(this, AuthenticationError.prototype);
-  }
-}
-
-export class TokenVerificationError extends Error {
-  constructor(m: string) {
-    super(m);
-
-    Object.setPrototypeOf(this, TokenVerificationError.prototype);
-  }
-}
-
 export class User {
   constructor(readonly uuid: string, readonly name: string, readonly email: string) {}
 
@@ -98,5 +82,21 @@ export class User {
     }
 
     throw new AuthenticationError("Authentication failed");
+  }
+}
+
+export class AuthenticationError extends Error {
+  constructor(m: string) {
+    super(m);
+
+    Object.setPrototypeOf(this, AuthenticationError.prototype);
+  }
+}
+
+export class TokenVerificationError extends Error {
+  constructor(m: string) {
+    super(m);
+
+    Object.setPrototypeOf(this, TokenVerificationError.prototype);
   }
 }
