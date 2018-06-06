@@ -70,4 +70,4 @@ if (config().NODE_ENV !== 'production') {
   }));
 }
 
-export default winstonLogger;
+export const logger = winstonLogger;

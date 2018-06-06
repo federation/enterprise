@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 
-import logger from './logger';
+import { logger } from './logger';
 
 const pool = new Pool();
 

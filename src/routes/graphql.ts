@@ -7,8 +7,8 @@ import Router from 'koa-router';
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
 import { makeExecutableSchema } from 'graphql-tools';
 
-import logger from '../logger';
 import { config } from '../config';
+import { logger } from '../logger';
 
 const router = new Router();
 

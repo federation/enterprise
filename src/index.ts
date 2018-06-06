@@ -7,8 +7,8 @@ import koaBody from 'koa-bodyparser';
 import koaLogger from 'koa-logger';
 import Router from 'koa-router';
 
-import logger from './logger';
 import { config } from './config';
+import { logger } from './logger';
 
 import UserRoutes from './routes/user';
 import GraphQLRoutes from './routes/graphql';
