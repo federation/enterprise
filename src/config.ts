@@ -62,7 +62,7 @@ export class Config implements Options, Requirements {
   }
 }
 
-export let config_: Config;
+let config_: Config;
 
 export function config() {
   if (!config_) {
