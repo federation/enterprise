@@ -91,7 +91,7 @@ export class User {
 
   static async authenticate(email: string, password: string): Promise<User> {
     const user = await db.getUserByEmail(email);
-    const isAuthenticated = await argon2.verify(User.normalizePassword(password), user.password);
+    const isAuthenticated = await argon2.verify(user.password, User.normalizePassword(password));
 
     if (isAuthenticated) {
       return new User(user.uuid, user.name, user.email);
