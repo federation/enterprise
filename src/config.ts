@@ -13,7 +13,7 @@ export class Config {
   readonly log_path: string;
   readonly jwt_secret: string;
 
-  private constructor(environment: any) {
+  constructor(environment: NodeJS.ProcessEnv) {
     this.environment = environment;
 
     this.port = parseInt(this.env('PORT', '8080'));
@@ -39,14 +39,8 @@ export class Config {
       }
     }
   }
-
-  static getInstance(environment: any = process.env) {
-    if (!Config.instance) {
-      Config.instance = new Config(environment);
-    }
-
-    return Config.instance;
-  }
 }
 
-export default Config.getInstance();
+const config = new Config(process.env);
+
+export default config;
