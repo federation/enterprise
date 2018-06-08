@@ -39,8 +39,8 @@ const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
   logger: {
-    log(e) {
-      logger.error(e as any);
+    log(e: any) {
+      logger.error(e);
     }
   }
 });
