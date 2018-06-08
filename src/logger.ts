@@ -49,10 +49,10 @@ class ConsoleFormatter {
 
     const MESSAGE: any = Symbol.for('message');
 
+    info[MESSAGE] = `${info.timestamp} [${info.level}]:${padding} ${info.message}`;
+
     if (inspected !== '{}') {
-      info[MESSAGE] = `${info.timestamp} [${info.level}]:${padding} ${info.message}\n${inspected}`;
-    } else {
-      info[MESSAGE] = `${info.timestamp} [${info.level}]:${padding} ${info.message}`;
+      info[MESSAGE] += `\n${inspected}`;
     }
 
     return info;
