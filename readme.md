@@ -10,6 +10,10 @@ Required environment variables:
 
 ## Development
 
+Clone the frontend [enterprise-web] project to the same directory containing this repository.
+
+[enterprise-web]: https://github.com/federation/enterprise-web
+
 ### Docker Compose
 
 Create a `.env` file at the root with these definitions:
@@ -17,8 +21,6 @@ Create a `.env` file at the root with these definitions:
 | Name                  | Value                    |
 | :--                   | :--                      |
 | `ENTERPRISE_WEB_PATH` | path to [enterprise-web] |
-
-[enterprise-web]: https://github.com/federation/enterprise-web
 
 Careful with relative paths when running docker as root.
 
