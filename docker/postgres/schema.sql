@@ -49,6 +49,28 @@ CREATE TABLE enterprise.employer (
   url TEXT
 );
 
+-- User-created notes about an employer.
+CREATE TABLE enterprise.employer_notes (
+  employer_notes_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+  -- The user the notes are by.
+  account_id UUID NOT NULL REFERENCES enterprise.account
+                           ON DELETE CASCADE
+                           ON UPDATE CASCADE,
+
+  -- The employer the notes are about.
+  employer_id UUID NOT NULL REFERENCES enterprise.employer
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE,
+
+  UNIQUE (employer_id, account_id),
+
+  -- The notes.
+  -- Prevent it being NULL, otherwise what's the point of the row existing.
+  notes TEXT NOT NULL
+);
 -- Additional information about an employer.
 -- Examples: urls for glassdoor, stackshare, indeed, experiences, comments.
 CREATE TABLE enterprise.employer_resource (
