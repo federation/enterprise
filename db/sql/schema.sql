@@ -50,8 +50,8 @@ CREATE TABLE enterprise.employer (
 );
 
 -- User-created notes about an employer.
-CREATE TABLE enterprise.employer_notes (
-  employer_notes_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+CREATE TABLE enterprise.employer_user_notes (
+  PRIMARY KEY (employer_id, account_id),
 
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -64,8 +64,6 @@ CREATE TABLE enterprise.employer_notes (
   employer_id UUID NOT NULL REFERENCES enterprise.employer
                             ON DELETE CASCADE
                             ON UPDATE CASCADE,
-
-  UNIQUE (employer_id, account_id),
 
   -- The notes.
   -- Prevent it being NULL, otherwise what's the point of the row existing.
