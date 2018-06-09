@@ -47,6 +47,7 @@ There are utility scripts in `docker/scripts/`.
 | :--            | :--                          |
 | `psql.sh`      | initiate a psql session      |
 | `db-dump.sh`   | dump db to `./db/dumps/`     |
+| `db-load.sh`   | load db dump file            |
 | `redis-cli.sh` | initiate a redis-cli session |
 
 ### Kubernetes
