@@ -3,6 +3,9 @@ type User {
   # Unique identifier for the user.
   uuid: ID!
 
+  # The creation date.
+  createdAt: String!
+
   # The user's name.
   name: String!
 
