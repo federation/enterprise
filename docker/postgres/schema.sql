@@ -143,29 +143,61 @@ CREATE TYPE enterprise.opportunity_result AS ENUM (
 
 -- An opportunity.
 CREATE TABLE enterprise.opportunity (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  opportunity_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  employer UUID REFERENCES enterprise.employer,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+  -- The employer the opportunity comes from.
+  employer_id UUID NOT NULL REFERENCES enterprise.employer
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE,
+
+  account_id UUID NOT NULL REFERENCES enterprise.account
+                           ON DELETE CASCADE
+                           ON UPDATE CASCADE,
 
   -- TODO
   -- Changing either of these should be done within a transaction which also
   -- creates an entry in opportunity_event.
+  -- TODO
+  -- Should these be a lookup table instead of an enum?
+
+  -- The status of the opportunity.
   status enterprise.opportunity_status NOT NULL,
+
+  -- The result of an opportunity.
   result enterprise.opportunity_result NOT NULL,
 
-  role TEXT,
+  -- The result must not remain pending if the opportunity has concluded.
+  CONSTRAINT valid_result
+  CHECK (NOT (status = 'concluded' AND result = 'pending')),
+
+  -- The job title.
+  title TEXT NOT NULL,
+
+  -- The location of the role.
   location TEXT,
-  remote BOOLEAN,
-  salary_range NUMRANGE,
+
+  -- Whether the role accepts remote.
+  remote BOOLEAN DEFAULT FALSE NOT NULL,
+
+  -- The advertised salary range.
+  salary_range NUMRANGE CONSTRAINT positive_salary
+                        CHECK (salary_range IS NULL OR lower(salary_range) >= 0),
+
+  -- The job post body.
   body TEXT,
+
+  -- The url of the job post.
   url TEXT,
-  technologies TEXT,
 
-  notes TEXT,
+  -- The list of technologies.
+  -- TODO
+  -- Should this be normalized in a separate table?
+  technologies TEXT[],
 
-  -- If the opportunity has concluded, the result must not remain pending.
-  CONSTRAINT valid_result CHECK (NOT (status = 'concluded' AND result = 'pending'))
+  -- Notes about the opportunity.
+  notes TEXT
 );
 
 -- Opportunity-related contact.
