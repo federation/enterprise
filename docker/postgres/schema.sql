@@ -275,12 +275,17 @@ CREATE TABLE enterprise.opportunity_event (
 -- TODO:
 -- * differentiate between categories?
 CREATE TABLE enterprise.opportunity_resource (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  opportunity_resource_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  opportunity UUID REFERENCES enterprise.opportunity,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-  url TEXT
+  -- The opportunity the resource pertains to.
+  opportunity_id UUID REFERENCES enterprise.opportunity
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE,
+
+  -- The url of the resource.
+  url TEXT NOT NULL
 );
 
 -- Opportunity-related comment.
