@@ -76,7 +76,7 @@ CREATE TABLE enterprise.employer_user_notes (
 
 -- Additional information about an employer.
 -- Examples: urls for glassdoor, stackshare, indeed, experiences, comments.
-CREATE TABLE enterprise.employer_notes_resource (
+CREATE TABLE enterprise.employer_user_resource (
   employer_notes_resource_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
