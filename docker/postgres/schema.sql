@@ -230,13 +230,18 @@ CREATE TABLE enterprise.opportunity_contact (
 
 -- Opportunity-related, time-stamped journal entry.
 -- Examples: describing latest development, communication, etc.
-CREATE TABLE enterprise.opportunity_journal (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+CREATE TABLE enterprise.opportunity_journal_entry (
+  opportunity_journal_entry_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  opportunity UUID REFERENCES enterprise.opportunity,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-  content TEXT NOT NULL
+  -- The opportunity the journal entry pertains to.
+  opportunity_id UUID REFERENCES enterprise.opportunity
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE,
+
+  -- The journal entry's body.
+  body TEXT NOT NULL
 );
 
 -- Opportunity-related event.
