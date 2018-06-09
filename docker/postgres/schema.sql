@@ -123,17 +123,21 @@ CREATE TYPE enterprise.opportunity_status AS ENUM (
 );
 
 -- The result of an active opportunity.
--- * Pending: the conclusion has not been reached
--- * Ignored: the submission was not followed up
--- * Deferred: the applicant concluded it
--- * Rejected: the target concluded it
--- * Offered: an offer was extended
 -- TODO: on each result change, require a journal entry?
 CREATE TYPE enterprise.opportunity_result AS ENUM (
+  -- The conclusion has not been reached.
   'pending',
+
+  -- The submission was not followed up.
   'ignored',
+
+  -- The applicant concluded it.
   'deferred',
+
+  -- The target concluded it.
   'rejected',
+
+  -- An offer was extended.
   'offered'
 );
 
