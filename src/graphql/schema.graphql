@@ -1,7 +1,7 @@
 # A user.
 type User {
   # Unique identifier for the user.
-  uuid: ID!
+  id: ID!
 
   # The creation date.
   createdAt: String!
