@@ -30,15 +30,23 @@ CREATE TABLE enterprise.account (
   refresh_token TEXT
 );
 
+-- An employer.
 CREATE TABLE enterprise.employer (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  employer_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+  -- The name of the employer.
   name TEXT NOT NULL,
-  location TEXT,
-  url TEXT,
 
-  notes TEXT
+  -- The employer's Headquarters.
+  location TEXT,
+
+  -- Whether the company is known to do remote.
+  remote BOOLEAN DEFAULT FALSE NOT NULL,
+
+  -- The employer's website.
+  url TEXT
 );
 
 -- Additional information about an employer.
