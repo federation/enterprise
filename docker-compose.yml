@@ -23,7 +23,12 @@ services:
 
   postgres:
     build:
-      context: ./docker/postgres
+      # NOTE
+      # The context is set to ./db/ and the Dockerfile path is expressed
+      # relative to that context. This is done so that the SQL files can live
+      # outside of the docker-specific directories.
+      context: ./db/
+      dockerfile: ../docker/postgres/Dockerfile
     image: fedtech/postgres:enterprise
     volumes:
       - db-data:/var/lib/postgresql/data
