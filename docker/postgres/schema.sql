@@ -83,8 +83,8 @@ CREATE TABLE enterprise.opportunity (
   location TEXT,
   remote BOOLEAN,
   salary_range NUMRANGE,
-  post_body TEXT,
-  post_url TEXT,
+  body TEXT,
+  url TEXT,
   technologies TEXT,
 
   notes TEXT,
