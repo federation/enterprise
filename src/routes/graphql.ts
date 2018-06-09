@@ -5,7 +5,7 @@ import Koa from 'koa';
 import Router from 'koa-router';
 
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
-import { makeExecutableSchema } from 'graphql-tools';
+import { IResolvers, makeExecutableSchema } from 'graphql-tools';
 
 import { config } from '../config';
 import { logger } from '../logger';
@@ -22,9 +22,9 @@ async function graphQLTextParser(ctx: Koa.Context, next: Function) {
 
 const typeDefs = fs.readFileSync(path.join(__dirname, '../graphql/schema.graphql'), 'utf8');
 
-const resolvers = {
+const resolvers: IResolvers = {
   Query: {
-    currentUser() {
+    currentUser(parent, args, context, info) {
       return {
         uuid: 'abc',
         name: 'bob',
