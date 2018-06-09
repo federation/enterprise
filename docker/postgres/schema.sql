@@ -206,14 +206,25 @@ CREATE TABLE enterprise.opportunity (
 -- name, and other notes.
 -- TODO: Should this be associated with an employer instead?
 CREATE TABLE enterprise.opportunity_contact (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  opportunity_contact_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  opportunity UUID REFERENCES enterprise.opportunity,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
+  -- The opportunity this contact information pertains to.
+  opportunity_id UUID REFERENCES enterprise.opportunity
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE,
+
+  -- The name of the contact.
   name TEXT NOT NULL,
+
+  -- The phone number of the contact.
   phone TEXT,
+
+  -- The email address of the contact.
   email TEXT,
+
+  -- Notes about the contact.
   notes TEXT
 );
 
