@@ -26,7 +26,7 @@ type Authentication {
 }
 
 type Query {
-  # Obtain the currently authenticated user.
+  # Get the currently authenticated user.
   currentUser: User
 }
 
