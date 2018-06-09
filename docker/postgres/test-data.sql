@@ -1,3 +1,5 @@
+\connect federation
+
 INSERT INTO enterprise.account (name, email, password, refresh_token) VALUES
   ('admin', 'admin@localhost', 'hunter2', 'refr3sh');
 

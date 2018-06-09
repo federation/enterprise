@@ -1,3 +1,9 @@
+-- CREATE USER admin;
+CREATE DATABASE federation;
+-- GRANT ALL PRIVILEGES ON DATABASE federation TO admin;
+
+\connect federation
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE SCHEMA enterprise;
