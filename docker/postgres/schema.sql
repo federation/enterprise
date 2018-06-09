@@ -40,22 +40,22 @@ CREATE TABLE enterprise.employer_resource (
 -- * Preparing: preparing the submission documents
 -- * Applied: documents have been submitted
 -- * Engaged: the employer initiated the hiring process
--- * Ended: the opportunity has been followed through to its conclusion
+-- * Concluded: the opportunity has been followed through to its conclusion
 -- TODO: on each status change, require a journal entry?
 CREATE TYPE enterprise.opportunity_status AS ENUM (
-    'inactive',
-    'researching',
-    'preparing',
-    'applied',
-    'engaged',
-    'ended'
+  'inactive',
+  'researching',
+  'preparing',
+  'applied',
+  'engaged',
+  'concluded'
 );
 
 -- The result of an active opportunity.
 -- * Pending: the conclusion has not been reached
 -- * Ignored: the submission was not followed up
--- * Deferred: the applicant ended it
--- * Rejected: the target ended it
+-- * Deferred: the applicant concluded it
+-- * Rejected: the target concluded it
 -- * Offered: an offer was extended
 -- TODO: on each result change, require a journal entry?
 CREATE TYPE enterprise.opportunity_result AS ENUM (
@@ -68,28 +68,28 @@ CREATE TYPE enterprise.opportunity_result AS ENUM (
 
 -- An opportunity.
 CREATE TABLE enterprise.opportunity (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    employer UUID REFERENCES enterprise.employer,
+  employer UUID REFERENCES enterprise.employer,
 
-    -- TODO
-    -- Changing either of these should be done within a transaction which also
-    -- creates an entry in opportunity_event.
-    status enterprise.opportunity_status NOT NULL,
-    result enterprise.opportunity_result NOT NULL,
+  -- TODO
+  -- Changing either of these should be done within a transaction which also
+  -- creates an entry in opportunity_event.
+  status enterprise.opportunity_status NOT NULL,
+  result enterprise.opportunity_result NOT NULL,
 
-    role TEXT,
-    location TEXT, -- TODO: handle remote
-    salary_range NUMRANGE,
-    post_body TEXT,
-    post_url TEXT,
-    technologies TEXT,
+  role TEXT,
+  location TEXT, -- TODO: handle remote
+  salary_range NUMRANGE,
+  post_body TEXT,
+  post_url TEXT,
+  technologies TEXT,
 
-    notes TEXT,
+  notes TEXT,
 
-    -- If the opportunity has ended, the result must not remain pending.
-    CONSTRAINT valid_result CHECK (NOT (status = 'ended' AND result = 'pending'))
+  -- If the opportunity has concluded, the result must not remain pending.
+  CONSTRAINT valid_result CHECK (NOT (status = 'concluded' AND result = 'pending'))
 );
 
 -- Opportunity-related contact.
