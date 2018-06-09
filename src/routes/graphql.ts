@@ -45,9 +45,13 @@ const schema = makeExecutableSchema({
   }
 });
 
-const graphQLOptions = {
-  schema,
-  context: {}
+function graphQLOptions(ctx: Koa.Context) {
+  return {
+    schema,
+    context: {
+      koa: ctx,
+    },
+  };
 };
 
 router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
