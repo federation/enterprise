@@ -8,8 +8,6 @@
 DUMP_BASE="db/dumps"
 
 PGDATABASE="federation"
-PGHOST="postgres"
-PGUSER="postgres"
 
 # Use an ISO-8601 prefix.
 DUMP_NAME=$(date --iso-8601=seconds)
@@ -27,8 +25,14 @@ DUMP_FILE="${DUMP_PATH}/${DUMP_NAME}.sql"
 # Create the path if it doesn't already exist.
 mkdir -p "$DUMP_PATH"
 
+# Ensure database is running.
+sudo docker-compose up --detach postgres
+
 echo "Dumping database to $DUMP_FILE"
 
 # Dump the database.
-sudo docker-compose run --rm postgres \
-     pg_dump -h "$PGHOST" -U "$PGUSER" --clean --if-exists --create "$PGDATABASE" > "$DUMP_FILE"
+sudo docker-compose exec -T postgres \
+     pg_dump --username postgres --clean --if-exists --create "$PGDATABASE" \
+     > "$DUMP_FILE"
+
+echo "Done"
