@@ -71,15 +71,33 @@ CREATE TABLE enterprise.employer_notes (
   -- Prevent it being NULL, otherwise what's the point of the row existing.
   notes TEXT NOT NULL
 );
+
+-- TODO
+-- The only real difference between this and employer_notes is a notes vs url field.
+-- Should this be done a different way?
+
 -- Additional information about an employer.
 -- Examples: urls for glassdoor, stackshare, indeed, experiences, comments.
-CREATE TABLE enterprise.employer_resource (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+CREATE TABLE enterprise.employer_notes_resource (
+  employer_notes_resource_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  employer UUID REFERENCES enterprise.employer,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-  url TEXT
+  -- The user the notes are by.
+  account_id UUID NOT NULL REFERENCES enterprise.account
+                           ON DELETE CASCADE
+                           ON UPDATE CASCADE,
+
+  -- The employer the notes are about.
+  employer_id UUID NOT NULL REFERENCES enterprise.employer
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE,
+
+  UNIQUE (employer_id, account_id),
+
+  -- The resource.
+  -- Prevent it being NULL, otherwise what's the point of the row existing.
+  url TEXT NOT NULL
 );
 
 -- The status of an active opportunity.
