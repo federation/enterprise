@@ -3,35 +3,35 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE SCHEMA enterprise;
 
 CREATE TABLE enterprise.account (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    name TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    refresh_token TEXT UNIQUE
+  name TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  refresh_token TEXT UNIQUE
 );
 
 CREATE TABLE enterprise.employer (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    name TEXT NOT NULL,
-    location TEXT,
-    url TEXT,
+  name TEXT NOT NULL,
+  location TEXT,
+  url TEXT,
 
-    notes TEXT
+  notes TEXT
 );
 
 -- Additional information about an employer.
 -- Examples: urls for glassdoor, stackshare, indeed, experiences, comments.
 CREATE TABLE enterprise.employer_resource (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    employer UUID REFERENCES enterprise.employer,
+  employer UUID REFERENCES enterprise.employer,
 
-    url TEXT
+  url TEXT
 );
 
 -- The status of an active opportunity.
@@ -59,11 +59,11 @@ CREATE TYPE enterprise.opportunity_status AS ENUM (
 -- * Offered: an offer was extended
 -- TODO: on each result change, require a journal entry?
 CREATE TYPE enterprise.opportunity_result AS ENUM (
-    'pending',
-    'ignored',
-    'deferred',
-    'rejected',
-    'offered'
+  'pending',
+  'ignored',
+  'deferred',
+  'rejected',
+  'offered'
 );
 
 -- An opportunity.
@@ -99,39 +99,39 @@ CREATE TABLE enterprise.opportunity (
 -- name, and other notes.
 -- TODO: Should this be associated with an employer instead?
 CREATE TABLE enterprise.opportunity_contact (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    opportunity UUID REFERENCES enterprise.opportunity,
+  opportunity UUID REFERENCES enterprise.opportunity,
 
-    name TEXT NOT NULL,
-    phone TEXT,
-    email TEXT,
-    notes TEXT
+  name TEXT NOT NULL,
+  phone TEXT,
+  email TEXT,
+  notes TEXT
 );
 
 -- Opportunity-related, time-stamped journal entry.
 -- Examples: describing latest development, communication, etc.
 CREATE TABLE enterprise.opportunity_journal (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    opportunity UUID REFERENCES enterprise.opportunity,
+  opportunity UUID REFERENCES enterprise.opportunity,
 
-    content TEXT NOT NULL
+  content TEXT NOT NULL
 );
 
 -- Opportunity-related event.
 -- Examples: phone-screen datetime, onsite datetime, submission deadline.
 CREATE TABLE enterprise.opportunity_event (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    opportunity UUID REFERENCES enterprise.opportunity,
+  opportunity UUID REFERENCES enterprise.opportunity,
 
-    scheduled_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    description TEXT NOT NULL,
-    location TEXT -- TODO: handle remote
+  scheduled_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  description TEXT NOT NULL,
+  location TEXT -- TODO: handle remote
 );
 
 -- Opportunity-related resource url.
@@ -139,12 +139,12 @@ CREATE TABLE enterprise.opportunity_event (
 -- TODO:
 -- * differentiate between categories?
 CREATE TABLE enterprise.opportunity_resource (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    opportunity UUID REFERENCES enterprise.opportunity,
+  opportunity UUID REFERENCES enterprise.opportunity,
 
-    url TEXT
+  url TEXT
 );
 
 -- Opportunity-related comment.
@@ -152,14 +152,14 @@ CREATE TABLE enterprise.opportunity_resource (
 -- * embed in database, or foreign reference?
 -- * differentiate between created and given?
 CREATE TABLE enterprise.opportunity_document (
-    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    name TEXT NOT NULL,
-    encoding TEXT NOT NULL,
-    mime_type TEXT NOT NULL,
-    description TEXT,
+  name TEXT NOT NULL,
+  encoding TEXT NOT NULL,
+  mime_type TEXT NOT NULL,
+  description TEXT,
 
-    content bytea,
-    foreign_content TEXT
+  content bytea,
+  foreign_content TEXT
 );
