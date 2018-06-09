@@ -43,3 +43,8 @@ type Mutation {
     refreshToken: String!
   ): Authentication
 }
+
+schema {
+  query: Query
+  mutation: Mutation
+}
