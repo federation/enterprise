@@ -6,10 +6,10 @@ CREATE TABLE enterprise.account (
     uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
-    name TEXT,
-    email TEXT,
-    password TEXT,
-    refresh_token TEXT
+    name TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    refresh_token TEXT UNIQUE
 );
 
 CREATE TABLE enterprise.employer (
