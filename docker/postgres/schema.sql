@@ -17,7 +17,7 @@ CREATE TABLE enterprise.employer (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     name TEXT NOT NULL,
-    location TEXT, -- TODO: for HQ. handle remote
+    location TEXT,
     url TEXT,
 
     notes TEXT
@@ -80,7 +80,8 @@ CREATE TABLE enterprise.opportunity (
   result enterprise.opportunity_result NOT NULL,
 
   role TEXT,
-  location TEXT, -- TODO: handle remote
+  location TEXT,
+  remote BOOLEAN,
   salary_range NUMRANGE,
   post_body TEXT,
   post_url TEXT,
