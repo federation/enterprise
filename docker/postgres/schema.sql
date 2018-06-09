@@ -8,14 +8,26 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE SCHEMA enterprise;
 
+-- A user account.
 CREATE TABLE enterprise.account (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  account_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
-  name TEXT NOT NULL UNIQUE,
-  email TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+  -- The username.
+  name TEXT UNIQUE NOT NULL,
+
+  -- The user's email address.
+  email TEXT NOT NULL,
+
+  -- The user's Argon2 password hash.
+  -- Computed as Argon2(Base64(SHA512(plain)))
   password TEXT NOT NULL,
-  refresh_token TEXT UNIQUE
+
+  -- A JSON Web Token representation of the user's refresh token.
+  -- TODO
+  -- Should this be unique?
+  refresh_token TEXT
 );
 
 CREATE TABLE enterprise.employer (
