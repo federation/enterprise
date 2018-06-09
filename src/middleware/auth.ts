@@ -37,7 +37,7 @@ export async function authenticateUser(ctx: Koa.Context) {
   }
 
   try {
-    const user = ctx.state.user = await User.authenticate(params.email, params.password);
+    ctx.state.user = await User.authenticate(params.email, params.password);
   } catch (e) {
     if (e instanceof AuthenticationError) {
       ctx.response.status = 402;
