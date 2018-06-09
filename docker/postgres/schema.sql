@@ -290,17 +290,43 @@ CREATE TABLE enterprise.opportunity_resource (
 
 -- Opportunity-related comment.
 -- TODO:
--- * embed in database, or foreign reference?
--- * differentiate between created and given?
+-- If a document is just a url, that could just be part of opportunity_resource?
+-- The only differentiation is that we would know that it's a document? So it
+-- could be shown in a different 'documents' section?
 CREATE TABLE enterprise.opportunity_document (
-  uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  opportunity_document_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+  -- The opportunity the document belongs to.
+  opportunity_id UUID REFERENCES enterprise.opportunity
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE,
+
+  -- The document's file name..
   name TEXT NOT NULL,
-  encoding TEXT NOT NULL,
-  mime_type TEXT NOT NULL,
+
+  -- The document's encoding.
+  encoding TEXT,
+
+  -- The document's mime type.
+  mime_type TEXT,
+
+  -- The document's description.
   description TEXT,
 
+  -- The document's binary content.
   content bytea,
-  foreign_content TEXT
+
+  CONSTRAINT valid_document_mime_type
+  CHECK (content IS NULL OR mime_type IS NOT NULL),
+
+  CONSTRAINT valid_document_encoding
+  CHECK (content IS NULL OR encoding IS NOT NULL),
+
+  -- The document's url.
+  url TEXT,
+
+  CONSTRAINT document_exists
+  CHECK (content IS NOT NULL OR url IS NOT NULL)
 );
