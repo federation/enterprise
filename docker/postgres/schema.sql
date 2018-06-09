@@ -101,19 +101,24 @@ CREATE TABLE enterprise.employer_notes_resource (
 );
 
 -- The status of an active opportunity.
--- * Inactive: saved but not actively pursued
--- * Researching: researching the company, role
--- * Preparing: preparing the submission documents
--- * Applied: documents have been submitted
--- * Engaged: the employer initiated the hiring process
--- * Concluded: the opportunity has been followed through to its conclusion
 -- TODO: on each status change, require a journal entry?
 CREATE TYPE enterprise.opportunity_status AS ENUM (
+  -- Opportunity is saved but not being actively pursued.
   'inactive',
+
+  -- Researching the company, role.
   'researching',
+
+  -- Preparing the submission documents.
   'preparing',
+
+  -- Documents have been submitted.
   'applied',
+
+  -- The employer initiated the hiring process.
   'engaged',
+
+  -- The opportunity has been followed through to its conclusion.
   'concluded'
 );
 
