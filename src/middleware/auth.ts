@@ -88,7 +88,7 @@ export function verifyAccessToken(ctx: Koa.Context) {
   const tokenHeader = ctx.request.headers['authorization'];
 
   if (!tokenHeader) {
-    return;
+    throw new Error('Not authenticated');
   }
 
   const token = tokenHeader.replace('Bearer ', '');
