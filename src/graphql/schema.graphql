@@ -16,13 +16,13 @@ type User {
 # Information about an authenticated user.
 type Authentication {
   # Short-lived authentication JWT.
-  accessToken: String!,
+  accessToken: String!
 
   # Long-lived refresh JWT.
-  refreshToken: String!,
+  refreshToken: String!
 
   # The authenticated user.
-  user: User!,
+  user: User!
 }
 
 type Query {
