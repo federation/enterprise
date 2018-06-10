@@ -1,28 +1,29 @@
-import { Pool } from 'pg';
+import pg from 'pg';
 
 import { logger } from './logger';
 
-const pool = new Pool();
-
-pool.on('error', (err, client) => {
-  logger.error('Unexpected error on idle client', err);
-
-  process.exit(-1);
-});
+let pool_: pg.Pool;
 
 export function connection() {
-  return pool;
-}
+  if (!pool_) {
+    pool_ = new pg.Pool()
 
-// TODO
-// Instead of passing these parameters loosely, use an interface or the User type?
-export async function createUser(name: string, email: string, password: string): Promise<any> {
-  const query = 'INSERT INTO enterprise.users (name, email, password) VALUES ($1, $2, $3) RETURNING uuid, name, email';
-  const parameters = [name, email, password];
+    pool_.on('acquire', (client) => {
+      logger.info('Acquired client from the PostgreSQL connection pool.');
+    });
 
-  const result = await connection().query(query, parameters);
+    pool_.on('remove', (client) => {
+      logger.info('Removed client from the PostgreSQL connection pool.');
+    });
 
-  return result.rows[0];
+    pool_.on('error', (err, client) => {
+      logger.error('Unexpected error on idle PostgreSQL client.', err);
+
+      process.exit(-1);
+    });
+  }
+
+  return pool_;
 }
 
 export async function getUserByEmail(email: string): Promise<any> {
