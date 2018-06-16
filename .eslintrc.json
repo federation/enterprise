@@ -9,7 +9,8 @@
   },
   "parser": "typescript-eslint-parser",
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:jest/recommended"
   ],
   "plugins": [
     "import",
