@@ -1,6 +1,6 @@
 import { Config, DefaultOptions } from './config';
 
-describe("Config", () => {
+describe('Config', () => {
   const RequiredOptions = {
     JWT_SECRET: 'hunter2',
   };
@@ -23,6 +23,8 @@ describe("Config", () => {
   test('throws when missing a required variable', () => {
     expect(() => {
       const envWithoutRequiredVariables: NodeJS.ProcessEnv = {};
+
+      // eslint-disable-next-line no-unused-vars
       const config = new Config(envWithoutRequiredVariables);
     }).toThrow();
   });
