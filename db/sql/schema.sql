@@ -25,8 +25,7 @@ CREATE TABLE enterprise.account (
   password TEXT NOT NULL,
 
   -- A JSON Web Token representation of the user's refresh token.
-  -- TODO
-  -- Should this be unique?
+  -- TODO: Should this be unique?
   refresh_token TEXT
 );
 
@@ -70,9 +69,8 @@ CREATE TABLE enterprise.employer_user_notes (
   notes TEXT NOT NULL
 );
 
--- TODO
--- The only real difference between this and employer_notes is a notes vs url field.
--- Should this be done a different way?
+-- TODO: The only real difference between this and employer_notes is a notes vs
+-- url field. Should this be done a different way?
 
 -- Additional information about an employer.
 -- Examples: urls for glassdoor, stackshare, indeed, experiences, comments.
@@ -154,11 +152,10 @@ CREATE TABLE enterprise.opportunity (
                            ON DELETE CASCADE
                            ON UPDATE CASCADE,
 
-  -- TODO
-  -- Changing either of these should be done within a transaction which also
-  -- creates an entry in opportunity_event.
-  -- TODO
-  -- Should these be a lookup table instead of an enum?
+  -- TODO: Changing either of these should be done within a transaction which
+  -- also creates an entry in opportunity_event.
+
+  -- TODO: Should these be a lookup table instead of an enum?
 
   -- The status of the opportunity.
   status enterprise.opportunity_status NOT NULL,
@@ -190,8 +187,7 @@ CREATE TABLE enterprise.opportunity (
   url TEXT,
 
   -- The list of technologies.
-  -- TODO
-  -- Should this be normalized in a separate table?
+  -- TODO: Should this be normalized in a separate table?
   technologies TEXT[],
 
   -- Notes about the opportunity.
@@ -270,8 +266,7 @@ CREATE TABLE enterprise.opportunity_event (
 
 -- Opportunity-related resource url.
 -- Examples: topic to learn, interview experience, practice problem.
--- TODO:
--- * differentiate between categories?
+-- TODO: differentiate between categories?
 CREATE TABLE enterprise.opportunity_resource (
   opportunity_resource_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 
@@ -287,8 +282,7 @@ CREATE TABLE enterprise.opportunity_resource (
 );
 
 -- Opportunity-related comment.
--- TODO:
--- If a document is just a url, that could just be part of opportunity_resource?
+-- TODO: If a document is just a url, that could just be part of opportunity_resource?
 -- The only differentiation is that we would know that it's a document? So it
 -- could be shown in a different 'documents' section?
 CREATE TABLE enterprise.opportunity_document (

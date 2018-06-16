@@ -79,8 +79,7 @@ export async function registerUser(ctx: Koa.Context) {
 
     ctx.state.user = user;
   } catch (e) {
-    // TODO
-    // boom authentication error
+    // TODO: boom authentication error
   }
 }
 
@@ -93,8 +92,7 @@ export function verifyAccessToken(ctx: Koa.Context) {
 
   const token = tokenHeader.replace('Bearer ', '');
 
-  // TODO
-  // Ensure this terminates and prevents further middleware from executing.
+  // TODO: Ensure this terminates and prevents further middleware from executing.
   try {
     ctx.state.user = User.verifyToken(token);
   } catch (e) {

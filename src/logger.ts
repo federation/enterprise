@@ -8,8 +8,7 @@ import _ from 'lodash';
 
 import { config } from './config';
 
-// TODO
-// Move this to Config?
+// TODO: Move this to Config?
 function logPath(log: string): string {
   return path.join(config().LOG_PATH, log);
 }

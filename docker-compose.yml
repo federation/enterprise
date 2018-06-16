@@ -23,8 +23,7 @@ services:
 
   postgres:
     build:
-      # NOTE
-      # The context is set to ./db/ and the Dockerfile path is expressed
+      # NOTE: The context is set to ./db/ and the Dockerfile path is expressed
       # relative to that context. This is done so that the SQL files can live
       # outside of the docker-specific directories.
       context: ./db/
