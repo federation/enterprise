@@ -128,6 +128,9 @@
     "no-tabs": ["error"],
     "no-throw-literal": ["error"],
     "no-trailing-spaces": ["error"],
+    // Disable this to avoid false-positives with TypeScript.
+    // This should already be caught by tsc.
+    "no-undef": ["off"],
     "no-undef-init": ["error"],
     "no-undefined": ["error"],
     "no-unmodified-loop-condition": ["error"],
