@@ -55,6 +55,7 @@
     "import/export": ["error"],
     "import/no-named-as-default": ["error"],
     "import/no-named-as-default-member": ["error"],
+    "import/no-default-export": ["error"],
     "import/no-deprecated": ["error"],
     "import/no-extraneous-dependencies": ["error"],
     "import/no-mutable-exports": ["error"],
@@ -62,7 +63,6 @@
     "import/no-duplicates": ["error"],
     "import/extensions": ["error"],
     "import/newline-after-import": ["error"],
-    "import/prefer-default-export": ["error"],
     "import/order": ["error", {
       "groups": [
         "builtin",
