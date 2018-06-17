@@ -40,7 +40,15 @@ class ConsoleFormatter {
   }
 
   transform(info: logform.TransformableInfo) {
-    const excludedKeys = ['timestamp', 'level', 'message', Symbol.for('level'), Symbol.for('message')];
+    const excludedKeys = [
+      'timestamp',
+      'level',
+      'message',
+      'splat',
+      Symbol.for('level'),
+      Symbol.for('message'),
+      Symbol.for('splat'),
+    ];
     const extraOptions = _.omit(info, excludedKeys);
     const inspected = util.inspect(extraOptions, false, null, this.opts.colorize);
 
