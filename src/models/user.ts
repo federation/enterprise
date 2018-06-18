@@ -3,9 +3,11 @@ import crypto from 'crypto';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
+
 import * as db from '../db';
 import { config } from '../config';
 import { AuthenticationError, TokenVerificationError } from '../errors';
+import { rowToProperties } from '../common';
 
 interface TokenPayload {
   readonly id: string;
@@ -31,42 +33,21 @@ export class User {
   password?: string;
   createdAt?: Date;
 
-  // TODO: Generating a uuidv4 via null is counter-intuitive.
-  constructor(id: string | null, name: string, email: string) {
-    this.id = id || uuidv4();
+  constructor(user: Partial<User> & Required<{ name: string, email: string }>) {
+    this.id = user.id || uuidv4();
 
-    this.name = name;
-    this.email = email;
-  }
+    this.name = user.name;
+    this.email = user.email;
 
-  static copyFrom<K extends keyof User>(source: Pick<User, K>) {
-    const user = new User(source.id, source.name, source.email);
-
-    user.refreshToken = source.refreshToken;
-    user.password = source.password;
-    user.createdAt = source.createdAt;
-
-    return user;
-  }
-
-  static rowToUserProperties<K extends keyof User>(row: any, ...keys: K[]): Required<Pick<User, K>> {
-    const user: any = {};
-
-    for (const key of keys) {
-      if (row[key]) {
-        user[key] = row[key];
-      } else {
-        throw new Error(`Row is missing key: ${key}`);
-      }
-    }
-
-    return user;
+    this.refreshToken = user.refreshToken;
+    this.password = user.password;
+    this.createdAt = user.createdAt;
   }
 
   static fromRow<K extends keyof User>(row: any, ...keys: K[]): User {
-    const mappedRow = User.rowToUserProperties(row, ...keys);
+    const mappedRow = rowToProperties<User, K>(row, ...keys);
 
-    return User.copyFrom(mappedRow);
+    return new User(mappedRow);
   }
 
   async create(password: string): Promise<this> {
@@ -156,7 +137,7 @@ export class User {
         throw new TokenVerificationError('Not an access token');
       }
 
-      return new User(user.id, user.name, user.email);
+      return new User(user);
     } catch (e) {
       throw new TokenVerificationError("Couldn't verify the JWT");
     }
@@ -187,7 +168,7 @@ export class User {
         throw new TokenVerificationError('Not a refresh token');
       }
 
-      return new User(user.id, user.name, user.email);
+      return new User(user);
     } catch (e) {
       throw new TokenVerificationError("Couldn't verify the JWT");
     }
