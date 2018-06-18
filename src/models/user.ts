@@ -174,27 +174,30 @@ export class CreateUser extends User {
 
 export class GetUserByName extends User {
   readonly password: string;
+  readonly refreshToken: string;
 
-  private constructor(user: GetUserByName) {
-    super(user.id, user.name, user.email);
+  private constructor(result: any) {
+    const user = result.rows[0];
+
+    expectKeys(user, 'account_id', 'name', 'email', 'password', 'refresh_token');
+
+    super(user.account_id, user.name, user.email);
 
     this.password = user.password;
+    this.refreshToken = user.refresh_token;
   }
 
   static async query(name: string): Promise<GetUserByName> {
     const result = await db.connection().query(
-      'SELECT account_id AS id, name, email, password \
-       FROM enterprise.users \
+      'SELECT account_id, name, email, password, refresh_token \
+       FROM enterprise.account \
        WHERE name = $1 \
        LIMIT 1',
       [name]
     );
 
-    const row: GetUserByName = result.rows[0];
 
-    expectKeys(row, 'id', 'name', 'email', 'password');
-
-    return new GetUserByName(row);
+    return new GetUserByName(result);
   }
 }
 
