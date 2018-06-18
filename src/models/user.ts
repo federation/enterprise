@@ -24,6 +24,11 @@ interface RefreshTokenPayload extends TokenPayload {
   readonly tokenType: 'refresh';
 }
 
+interface UserRequiredFields {
+  readonly name: string;
+  readonly email: string;
+}
+
 export class User {
   readonly id: string;
   readonly name: string;
@@ -33,7 +38,7 @@ export class User {
   password?: string;
   createdAt?: Date;
 
-  constructor(user: Partial<User> & Required<{ name: string, email: string }>) {
+  constructor(user: Partial<User> & UserRequiredFields) {
     this.id = user.id || uuidv4();
 
     this.name = user.name;
