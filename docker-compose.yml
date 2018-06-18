@@ -20,6 +20,8 @@ services:
       - '8000:80'
     volumes:
       - "${ENTERPRISE_WEB_PATH}/static/:/usr/share/nginx/html"
+    depends_on:
+      - api
 
   postgres:
     build:
