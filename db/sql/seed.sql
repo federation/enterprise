@@ -1,7 +1,8 @@
 \connect federation
 
 INSERT INTO enterprise.account (name, email, password, refresh_token) VALUES
-  ('admin', 'admin@localhost', 'hunter2', 'refr3sh');
+  -- Password: hunter2
+  ('admin', 'admin@localhost', '$argon2i$v=19$m=4096,t=3,p=1$/3hWdNA0hknr8cBBCTfyyg$9G8nvXOv/pczXoZy2PUMqO0dE5Vuz22Xe0z000e4NcU', 'refr3sh');
 
 INSERT INTO enterprise.employer (name, location, url) VALUES
   ('Company', 'San Francisco, CA', 'http://www.somesite.com');
