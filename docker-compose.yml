@@ -6,6 +6,8 @@ services:
       target: builder
     image: fedtech/enterprise:dev
     command: ["yarn", "run", "start:live"]
+    env_file:
+      - ./.env
     volumes:
       - .:/usr/src/app
     depends_on:
