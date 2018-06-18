@@ -29,6 +29,22 @@ app.use(koaLogger({
   }
 }))
 
+// TODO: This runs before the request is actually finished. It'll consider a
+// request done as soon as reverse proxy starts receiving it? but the koa-logger
+// will consider it done until after nginx finishes responding.
+async function requestLogger(ctx: Koa.Context, next: Function) {
+  const start = Date.now();
+
+  await next();
+
+  const time = Date.now() - start;
+  const size = '0kb';
+
+  logger.info(`${ctx.method} ${ctx.path} ${ctx.status} ${time} ${size}`);
+}
+
+app.use(requestLogger);
+
 app.use(auth.unauthenticatedHandler);
 
 app.use(koaBody({
