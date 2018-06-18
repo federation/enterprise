@@ -63,11 +63,12 @@ const resolvers: IResolvers = {
       logger.info('context:', context);
 
       // TODO: catch
-      const user = await User.create(args.name, args.email, args.password);
+      const user = new User(null, args.name, args.email);
+      const createdUser = await user.create(args.password);
 
-      logger.info('created user:', user);
+      logger.info('created user:', createdUser);
 
-      const accessToken = user.createAccessToken();
+      const accessToken = createdUser.createAccessToken();
 
       logger.info('created access token:', accessToken);
 

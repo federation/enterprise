@@ -29,8 +29,11 @@ export class User {
   readonly name: string;
   readonly email: string;
 
-  constructor(id: string, name: string, email: string) {
-    this.id = id;
+  refreshToken?: string;
+
+  constructor(id: string | null, name: string, email: string) {
+    this.id = id || uuidv4();
+
     this.name = name;
     this.email = email;
   }
@@ -39,11 +42,18 @@ export class User {
     return new User(uuidv4(), name, email);
   }
 
-  static async create(name: string, email: string, password: string): Promise<CreateUser> {
+  async create(password: string): Promise<this> {
     const argon2Hash = await argon2.hash(User.normalizePassword(password));
-    const createdUser = await CreateUser.query(name, email, argon2Hash);
 
-    return createdUser;
+    this.refreshToken = this.createRefreshToken();
+
+    await db.connection().query(
+      'INSERT INTO enterprise.account (account_id, name, email, password, refresh_token) \
+       VALUES ($1, $2, $3, $4, $5)',
+      [this.id, this.name, this.email, argon2Hash, this.refreshToken]
+    );
+
+    return this;
   }
 
   static async authenticate(name: string, password: string): Promise<GetUserByName> {
@@ -141,34 +151,6 @@ export class User {
     const user = await UpdateUserRefreshToken.query(this.id, refreshToken);
 
     return user;
-  }
-}
-
-export class CreateUser extends User {
-  readonly refreshToken: string;
-
-  constructor(result: any) {
-    const row = result.rows[0];
-
-    expectKeys(row, 'account_id', 'name', 'email', 'refresh_token');
-
-    super(row.account_id, row.name, row.email);
-
-    this.refreshToken = row.refresh_token;
-  }
-
-  static async query(name: string, email: string, password: string): Promise<CreateUser> {
-    const user = User.generateId(name, email);
-    const refreshToken = user.createRefreshToken();
-
-    const result = await db.connection().query(
-      'INSERT INTO enterprise.account (account_id, name, email, password, refresh_token) \
-       VALUES ($1, $2, $3, $4, $5) \
-       RETURNING account_id, name, email, refresh_token',
-      [user.id, user.name, user.email, password, refreshToken]
-    );
-
-    return new CreateUser(result);
   }
 }
 
