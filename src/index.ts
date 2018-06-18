@@ -1,5 +1,4 @@
-'use strict';
-
+/* eslint-disable import/imports-first */
 require('dotenv').config();
 
 import Koa from 'koa';

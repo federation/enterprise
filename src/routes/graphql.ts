@@ -20,6 +20,7 @@ async function graphQLTextParser(ctx: Koa.Context, next: Function) {
   await next();
 }
 
+// eslint-disable-next-line no-sync
 const typeDefs = fs.readFileSync(path.join(__dirname, '../graphql/schema.graphql'), 'utf8');
 
 const resolvers: IResolvers = {

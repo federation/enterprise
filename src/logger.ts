@@ -21,11 +21,11 @@ const winstonLogger = winston.createLogger({
   ),
   transports: [
     new winston.transports.File({ filename: logPath('error.log'), level: 'error' }),
-    new winston.transports.File({ filename: logPath('combined.log') })
+    new winston.transports.File({ filename: logPath('combined.log') }),
   ],
   exceptionHandlers: [
-    new winston.transports.File({ filename: logPath('exceptions.log') })
-  ]
+    new winston.transports.File({ filename: logPath('exceptions.log') }),
+  ],
 });
 
 interface ConsoleFormatterOptions {
@@ -52,7 +52,7 @@ class ConsoleFormatter {
     const extraOptions = _.omit(info, excludedKeys);
     const inspected = util.inspect(extraOptions, false, null, this.opts.colorize);
 
-    const padding = info.padding && info.padding[info.level] || '';
+    const padding = (info.padding && info.padding[info.level]) || '';
 
     const MESSAGE: any = Symbol.for('message');
 
@@ -73,7 +73,7 @@ if (config().NODE_ENV !== 'production') {
       format.colorize(),
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       new ConsoleFormatter(),
-    )
+    ),
   }));
 }
 
