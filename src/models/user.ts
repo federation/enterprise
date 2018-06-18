@@ -213,7 +213,7 @@ export class GetUserByRefreshToken extends User {
   static async query(id: string, refreshToken: string): Promise<GetUserByRefreshToken> {
     const result = await db.connection().query(
       'SELECT account_id AS id, name, email, password \
-       FROM enterprise.users \
+       FROM enterprise.account \
        WHERE account_id = $1 AND refresh_token = $2 \
        LIMIT 1',
       [id, refreshToken]
@@ -239,7 +239,7 @@ export class UpdateUserRefreshToken extends User {
 
   static async query(id: string, refreshToken: string): Promise<UpdateUserRefreshToken> {
     const result = await db.connection().query(
-      'UPDATE enterprise.users \
+      'UPDATE enterprise.account \
        SET refresh_token = $1 \
        WHERE account_id = $2 \
        RETURNING account_id AS id, name, email, refresh_token AS refreshToken',
