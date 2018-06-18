@@ -30,6 +30,7 @@ export class User {
   readonly email: string;
 
   refreshToken?: string;
+  password?: string;
 
   constructor(id: string | null, name: string, email: string) {
     this.id = id || uuidv4();
@@ -81,8 +82,20 @@ export class User {
     throw new AuthenticationError('Authentication failed');
   }
 
-  static async getByRefreshToken(id: string, refreshToken: string): Promise<GetUserByRefreshToken> {
-    const user = await GetUserByRefreshToken.query(id, refreshToken);
+  static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
+    const result = await db.connection().query(
+      'SELECT account_id AS id, name, email, password \
+       FROM enterprise.account \
+       WHERE account_id = $1 AND refresh_token = $2 \
+       LIMIT 1',
+      [id, refreshToken]
+    );
+
+    const row = result.rows[0];
+
+    const user = new User(row.account_id, row.name, row.email);
+
+    user.password = row.password;
 
     return user;
   }
@@ -165,33 +178,6 @@ export class User {
     const user = await UpdateUserRefreshToken.query(this.id, refreshToken);
 
     return user;
-  }
-}
-
-export class GetUserByRefreshToken extends User {
-  readonly password: string;
-
-  private constructor(user: GetUserByRefreshToken) {
-    super(user.id, user.name, user.email);
-
-    this.password = user.password;
-  }
-
-  static async query(id: string, refreshToken: string): Promise<GetUserByRefreshToken> {
-    const result = await db.connection().query(
-      'SELECT account_id AS id, name, email, password \
-       FROM enterprise.account \
-       WHERE account_id = $1 AND refresh_token = $2 \
-       LIMIT 1',
-      [id, refreshToken]
-    );
-
-    const row: GetUserByRefreshToken = result.rows[0];
-
-    // TODO: Test that this is actually working, and not getting set to null.
-    expectKeys(row, 'id', 'name', 'email', 'password');
-
-    return new GetUserByRefreshToken(row);
   }
 }
 
