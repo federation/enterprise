@@ -204,7 +204,7 @@ export class GetUserByName extends User {
 export class GetUserByRefreshToken extends User {
   readonly password: string;
 
-  private constructor(user: GetUserByName) {
+  private constructor(user: GetUserByRefreshToken) {
     super(user.id, user.name, user.email);
 
     this.password = user.password;
