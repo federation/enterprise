@@ -17,15 +17,19 @@ export async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
   }
 }
 
-export function createAccessToken(ctx: Koa.Context) {
+export function createAccessToken(ctx: Koa.Context, next: Function) {
   ctx.state.accessToken = ctx.state.user.accessToken();
+
+  return next();
 }
 
-export async function createRefreshToken(ctx: Koa.Context) {
+export async function createRefreshToken(ctx: Koa.Context, next: Function) {
   ctx.state.refreshToken = await ctx.state.user.createRefreshToken();
+
+  return next();
 }
 
-export async function authenticateUser(ctx: Koa.Context) {
+export async function authenticateUser(ctx: Koa.Context, next: Function) {
   const params = ctx.request.body;
 
   if (!params.email || !params.password) {
@@ -39,6 +43,8 @@ export async function authenticateUser(ctx: Koa.Context) {
 
   try {
     ctx.state.user = await User.authenticate(params.email, params.password);
+
+    return next();
   } catch (e) {
     if (e instanceof AuthenticationError) {
       ctx.response.status = HttpStatus.UNAUTHORIZED;
@@ -49,7 +55,7 @@ export async function authenticateUser(ctx: Koa.Context) {
   }
 }
 
-export function authenticationResponse(ctx: Koa.Context) {
+export function authenticationResponse(ctx: Koa.Context, next: Function) {
   ctx.status = 201;
   ctx.body = {
     success: true,
@@ -62,9 +68,11 @@ export function authenticationResponse(ctx: Koa.Context) {
   if (ctx.state.refreshToken) {
     ctx.body.refreshToken = ctx.state.refreshToken;
   }
+
+  return next();
 }
 
-export async function registerUser(ctx: Koa.Context) {
+export async function registerUser(ctx: Koa.Context, next: Function) {
   const params = ctx.request.body;
 
   if (!params.email || !params.password) {
@@ -72,7 +80,7 @@ export async function registerUser(ctx: Koa.Context) {
       error: 'Send both email and password',
     };
 
-    return;
+    return next();
   }
 
   try {
@@ -84,8 +92,8 @@ export async function registerUser(ctx: Koa.Context) {
   }
 }
 
-export function verifyAccessToken(ctx: Koa.Context) {
-  const tokenHeader = ctx.request.headers['authorization'];
+export function verifyAccessToken(ctx: Koa.Context, next: Function) {
+  const tokenHeader = ctx.request.headers.authorization;
 
   if (!tokenHeader) {
     throw new Error('Not authenticated');
@@ -95,7 +103,9 @@ export function verifyAccessToken(ctx: Koa.Context) {
 
   // TODO: Ensure this terminates and prevents further middleware from executing.
   try {
-    ctx.state.user = User.verifyToken(token);
+    ctx.state.user = User.verifyAccessToken(token);
+
+    return next();
   } catch (e) {
     if (e instanceof TokenVerificationError) {
       ctx.response.status = HttpStatus.UNAUTHORIZED;
@@ -106,12 +116,14 @@ export function verifyAccessToken(ctx: Koa.Context) {
   }
 }
 
-export async function verifyRefreshToken(ctx: Koa.Context) {
-  if (ctx.body.refreshToken != '') {
+export async function verifyRefreshToken(ctx: Koa.Context, next: Function) {
+  if (ctx.body.refreshToken !== '' && ctx.body.id) {
     try {
-      const user = await User.getByRefreshToken(ctx.body.refreshToken);
+      const user = await User.getByRefreshToken(ctx.body.id, ctx.body.refreshToken);
 
       ctx.state.user = user;
+
+      return next();
     } catch (e) {
       ctx.status = HttpStatus.UNAUTHORIZED;
       ctx.body = 'Not authenticated';
