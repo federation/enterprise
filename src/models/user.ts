@@ -3,11 +3,9 @@ import crypto from 'crypto';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
-
 import * as db from '../db';
 import { config } from '../config';
 import { AuthenticationError, TokenVerificationError } from '../errors';
-import { expectKeys } from '../common';
 
 interface TokenPayload {
   readonly id: string;
@@ -31,12 +29,44 @@ export class User {
 
   refreshToken?: string;
   password?: string;
+  createdAt?: Date;
 
+  // TODO: Generating a uuidv4 via null is counter-intuitive.
   constructor(id: string | null, name: string, email: string) {
     this.id = id || uuidv4();
 
     this.name = name;
     this.email = email;
+  }
+
+  static copyFrom<K extends keyof User>(source: Pick<User, K>) {
+    const user = new User(source.id, source.name, source.email);
+
+    user.refreshToken = source.refreshToken;
+    user.password = source.password;
+    user.createdAt = source.createdAt;
+
+    return user;
+  }
+
+  static rowToUserProperties<K extends keyof User>(row: any, ...keys: K[]): Required<Pick<User, K>> {
+    const user: any = {};
+
+    for (const key of keys) {
+      if (row[key]) {
+        user[key] = row[key];
+      } else {
+        throw new Error(`Row is missing key: ${key}`);
+      }
+    }
+
+    return user;
+  }
+
+  static fromRow<K extends keyof User>(row: any, ...keys: K[]): User {
+    const mappedRow = User.rowToUserProperties(row, ...keys);
+
+    return User.copyFrom(mappedRow);
   }
 
   async create(password: string): Promise<this> {
@@ -55,23 +85,23 @@ export class User {
 
   static async authenticate(name: string, password: string): Promise<User> {
     const result = await db.connection().query(
-      'SELECT account_id, name, email, password, refresh_token \
+      'SELECT account_id AS id, name, email, password, refresh_token as "refreshToken" \
        FROM enterprise.account \
-       WHERE name = $1 \
-       LIMIT 1',
+       WHERE name = $1',
       [name]
     );
 
-    const row = result.rows[0];
+    if (result.rowCount > 1) {
+      throw new Error('More than one user with the same account_id and refresh_token exists!');
+    }
 
-    const isAuthenticated = await argon2.verify(row.password, User.normalizePassword(password));
+    const user = User.fromRow(result.rows[0], 'id', 'name', 'email', 'password', 'refreshToken');
+
+    // NOTE: The type assertion operator is used because we guarantee that
+    // password exists above.
+    const isAuthenticated = await argon2.verify(user.password!, User.normalizePassword(password));
 
     if (isAuthenticated) {
-      const user = new User(row.account_id, row.name, row.email);
-
-      // TODO: create mapToUserProperties(row)
-      user.refreshToken = row.refresh_token;
-
       return user;
     }
 
@@ -82,18 +112,15 @@ export class User {
     const result = await db.connection().query(
       'SELECT account_id AS id, name, email, password \
        FROM enterprise.account \
-       WHERE account_id = $1 AND refresh_token = $2 \
-       LIMIT 1',
+       WHERE account_id = $1 AND refresh_token = $2',
       [id, refreshToken]
     );
 
-    const row = result.rows[0];
+    if (result.rowCount > 1) {
+      throw new Error('More than one user with the same account_id and refresh_token exists!');
+    }
 
-    const user = new User(row.account_id, row.name, row.email);
-
-    user.password = row.password;
-
-    return user;
+    return User.fromRow(result.rows[0], 'id', 'name', 'email', 'password');
   }
 
   static normalizePassword(password: string): string {
