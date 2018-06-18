@@ -3,6 +3,7 @@ import HttpStatus from 'http-status';
 
 import { User } from '../models/user';
 import { AuthenticationError, TokenVerificationError } from '../errors';
+import { logger } from '../logger';
 
 export async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
   try {
@@ -88,7 +89,7 @@ export async function registerUser(ctx: Koa.Context, next: Function) {
 
     ctx.state.user = user;
   } catch (e) {
-    // TODO: boom authentication error
+    logger.error('problem registering user', e);
   }
 }
 
