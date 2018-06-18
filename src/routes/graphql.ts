@@ -142,7 +142,7 @@ router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
 
 if (config().NODE_ENV === 'development') {
   router.get('/graphiql', graphiqlKoa({
-    endpointURL: '/graphql',
+    endpointURL: '/api/graphql',
     // passHeader: `'Authorization': 'Bearer lorem ipsum'`
   }));
 }
