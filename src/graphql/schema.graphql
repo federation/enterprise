@@ -1,45 +1,49 @@
-# A user.
+"A user."
 type User {
-  # Unique identifier for the user.
+  "Unique identifier for the user."
   id: ID!
 
-  # The creation date.
+  "The creation date."
   createdAt: String!
 
-  # The user's name.
+  "The user's name."
   name: String!
 
-  # The user's email address.
+  "The user's email address."
   email: String!
 }
 
-# Information about an authenticated user.
+"Information about an authenticated user."
 type Authentication {
-  # Short-lived authentication JWT.
+  "Short-lived authentication JWT."
   accessToken: String!
 
-  # Long-lived refresh JWT.
+  "Long-lived refresh JWT."
   refreshToken: String!
 
-  # The authenticated user.
+  "The authenticated user."
   user: User!
 }
 
 type Query {
-  # Get the currently authenticated user.
+  """
+  Get the currently authenticated user.
+
+  The user is expected to be authenticated.
+  """
   currentUser: User
 }
 
 type Mutation {
-  # Register a new user.
-  register(email: String!, password: String!, name: String!): Authentication
+  "Register a new user."
+  register(name: String!, email: String!, password: String!): Authentication
 
-  # Authenticate an existing user.
-  login(email: String!, password: String!): Authentication
+  "Authenticate an existing user."
+  login(name: String!, password: String!): Authentication
 
-  # Obtain a refreshed access token.
+  "Obtain a refreshed access token."
   refreshAccessToken(
-    # The user's long-lived refresh token.
+    "The user's long-lived refresh token."
     refreshToken: String!
   ): Authentication
 }
