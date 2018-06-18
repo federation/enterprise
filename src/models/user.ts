@@ -60,11 +60,11 @@ export class User {
 
     this.refreshToken = this.createRefreshToken();
 
-    await db.createUser(this.id, this.name, this.email, argon2Hash, this.refreshToken);
+    await db.user.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
   }
 
   static async authenticate(name: string, password: string): Promise<User> {
-    const result = await db.getUserByName(name);
+    const result = await db.user.getByName(name);
 
     if (result.rowCount > 1) {
       throw new Error('More than one user with the same account_id and refresh_token exists!');
@@ -84,7 +84,7 @@ export class User {
   }
 
   static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
-    const result = await db.getUserByRefreshToken(id, refreshToken);
+    const result = await db.user.getByRefreshToken(id, refreshToken);
 
     if (result.rowCount > 1) {
       throw new Error('More than one user with the same account_id and refresh_token exists!');
@@ -166,6 +166,6 @@ export class User {
   updateRefreshToken(refreshToken?: string) {
     this.refreshToken = refreshToken || this.refreshToken || this.createRefreshToken();
 
-    return db.updateRefreshToken(this.id, this.refreshToken);
+    return db.user.updateRefreshToken(this.id, this.refreshToken);
   }
 }
