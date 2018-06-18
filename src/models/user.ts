@@ -56,11 +56,25 @@ export class User {
     return this;
   }
 
-  static async authenticate(name: string, password: string): Promise<GetUserByName> {
-    const user = await GetUserByName.query(name);
-    const isAuthenticated = await argon2.verify(user.password, User.normalizePassword(password));
+  static async authenticate(name: string, password: string): Promise<User> {
+    const result = await db.connection().query(
+      'SELECT account_id, name, email, password, refresh_token \
+       FROM enterprise.account \
+       WHERE name = $1 \
+       LIMIT 1',
+      [name]
+    );
+
+    const row = result.rows[0];
+
+    const isAuthenticated = await argon2.verify(row.password, User.normalizePassword(password));
 
     if (isAuthenticated) {
+      const user = new User(row.account_id, row.name, row.email);
+
+      // TODO: create mapToUserProperties(row)
+      user.refreshToken = row.refresh_token;
+
       return user;
     }
 
@@ -151,35 +165,6 @@ export class User {
     const user = await UpdateUserRefreshToken.query(this.id, refreshToken);
 
     return user;
-  }
-}
-
-export class GetUserByName extends User {
-  readonly password: string;
-  readonly refreshToken: string;
-
-  private constructor(result: any) {
-    const user = result.rows[0];
-
-    expectKeys(user, 'account_id', 'name', 'email', 'password', 'refresh_token');
-
-    super(user.account_id, user.name, user.email);
-
-    this.password = user.password;
-    this.refreshToken = user.refresh_token;
-  }
-
-  static async query(name: string): Promise<GetUserByName> {
-    const result = await db.connection().query(
-      'SELECT account_id, name, email, password, refresh_token \
-       FROM enterprise.account \
-       WHERE name = $1 \
-       LIMIT 1',
-      [name]
-    );
-
-
-    return new GetUserByName(result);
   }
 }
 
