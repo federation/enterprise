@@ -43,8 +43,8 @@ const schema = makeExecutableSchema({
   logger: {
     log(e: any) {
       logger.error(e);
-    }
-  }
+    },
+  },
 });
 
 function graphQLOptions(ctx: Koa.Context) {

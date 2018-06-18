@@ -1,8 +1,8 @@
-import { User, AuthenticationError, TokenVerificationError } from '../models/user';
-
 import Koa from 'koa';
-import Router from 'koa-router';
 import HttpStatus from 'http-status';
+
+import { User } from '../models/user';
+import { AuthenticationError, TokenVerificationError } from '../errors';
 
 export async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
   try {

@@ -88,8 +88,10 @@ export class User {
       tokenType: 'access',
     };
 
+    const MILLISECONDS_IN_MINUTE = 60000;
+
     const metadata = {
-      expiresIn: '1 minute',
+      expiresIn: MILLISECONDS_IN_MINUTE,
     };
 
     return jwt.sign(payload, config().JWT_SECRET, metadata);
@@ -118,8 +120,10 @@ export class User {
       tokenType: 'refresh',
     };
 
+    const MILLISECONDS_IN_30_DAYS = 2592000000;
+
     const metadata = {
-      expiresIn: '1 month',
+      expiresIn: MILLISECONDS_IN_30_DAYS,
     };
 
     return jwt.sign(payload, config().JWT_SECRET, metadata);
