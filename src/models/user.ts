@@ -29,10 +29,6 @@ export class User {
   readonly name: string;
   readonly email: string;
 
-  refreshToken?: string;
-  password?: string;
-  createdAt?: Date;
-
   constructor(id: string, name: string, email: string) {
     this.id = id;
     this.name = name;
@@ -44,14 +40,8 @@ export class User {
   }
 
   static async create(name: string, email: string, password: string): Promise<CreateUser> {
-    const user = User.generateId(name, email);
     const argon2Hash = await argon2.hash(User.normalizePassword(password));
-
-    user.refreshToken = user.createRefreshToken();
-
-    expectKeys(user, 'id', 'name', 'email', 'refreshToken');
-
-    const createdUser = await CreateUser.query(user as CreateUser, argon2Hash);
+    const createdUser = await CreateUser.query(name, email, argon2Hash);
 
     return createdUser;
   }
@@ -157,25 +147,28 @@ export class User {
 export class CreateUser extends User {
   readonly refreshToken: string;
 
-  constructor(user: CreateUser) {
-    super(user.id, user.name, user.email);
+  constructor(result: any) {
+    const row = result.rows[0];
 
-    this.refreshToken = user.refreshToken;
+    expectKeys(row, 'account_id', 'name', 'email', 'refresh_token');
+
+    super(row.account_id, row.name, row.email);
+
+    this.refreshToken = row.refresh_token;
   }
 
-  static async query(user: CreateUser, password: string): Promise<CreateUser> {
+  static async query(name: string, email: string, password: string): Promise<CreateUser> {
+    const user = User.generateId(name, email);
+    const refreshToken = user.createRefreshToken();
+
     const result = await db.connection().query(
-      'INSERT INTO enterprise.users (account_id, name, email, password, refresh_token) \
+      'INSERT INTO enterprise.account (account_id, name, email, password, refresh_token) \
        VALUES ($1, $2, $3, $4, $5) \
-       RETURNING account_id AS id, name, email, refresh_token AS refreshToken',
-      [user.id, user.name, user.email, password, user.refreshToken]
+       RETURNING account_id, name, email, refresh_token',
+      [user.id, user.name, user.email, password, refreshToken]
     );
 
-    const row: CreateUser = result.rows[0];
-
-    expectKeys(row, 'id', 'name', 'email', 'refreshToken');
-
-    return new CreateUser(row);
+    return new CreateUser(result);
   }
 }
 
