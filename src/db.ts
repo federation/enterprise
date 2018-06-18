@@ -1,8 +1,6 @@
 import pg from 'pg';
 
 import { logger } from './logger';
-import { User } from './models/user';
-import { expectKeys } from './common';
 
 let pool_: pg.Pool;
 
