@@ -64,11 +64,12 @@ const resolvers: IResolvers = {
 
       // TODO: catch
       const user = new User({ name: args.name, email: args.email });
-      const createdUser = await user.create(args.password);
 
-      logger.info('created user:', createdUser);
+      await user.create(args.password);
 
-      const accessToken = createdUser.createAccessToken();
+      logger.info('created user:', user);
+
+      const accessToken = user.createAccessToken();
 
       logger.info('created access token:', accessToken);
 

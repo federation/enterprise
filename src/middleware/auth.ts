@@ -85,7 +85,9 @@ export async function registerUser(ctx: Koa.Context, next: Function) {
   }
 
   try {
-    const user = await User.create(params.name, params.email, params.password);
+    const user = new User({ name: params.name, email: params.email });
+
+    await user.create(params.password);
 
     ctx.state.user = user;
   } catch (e) {

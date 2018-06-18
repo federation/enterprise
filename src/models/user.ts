@@ -55,27 +55,16 @@ export class User {
     return new User(mappedRow);
   }
 
-  async create(password: string): Promise<this> {
+  async create(password: string) {
     const argon2Hash = await argon2.hash(User.normalizePassword(password));
 
     this.refreshToken = this.createRefreshToken();
 
-    await db.connection().query(
-      'INSERT INTO enterprise.account (account_id, name, email, password, refresh_token) \
-       VALUES ($1, $2, $3, $4, $5)',
-      [this.id, this.name, this.email, argon2Hash, this.refreshToken]
-    );
-
-    return this;
+    await db.createUser(this.id, this.name, this.email, argon2Hash, this.refreshToken);
   }
 
   static async authenticate(name: string, password: string): Promise<User> {
-    const result = await db.connection().query(
-      'SELECT account_id AS id, name, email, password, refresh_token as "refreshToken" \
-       FROM enterprise.account \
-       WHERE name = $1',
-      [name]
-    );
+    const result = await db.getUserByName(name);
 
     if (result.rowCount > 1) {
       throw new Error('More than one user with the same account_id and refresh_token exists!');
@@ -95,12 +84,7 @@ export class User {
   }
 
   static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
-    const result = await db.connection().query(
-      'SELECT account_id AS id, name, email, password \
-       FROM enterprise.account \
-       WHERE account_id = $1 AND refresh_token = $2',
-      [id, refreshToken]
-    );
+    const result = await db.getUserByRefreshToken(id, refreshToken);
 
     if (result.rowCount > 1) {
       throw new Error('More than one user with the same account_id and refresh_token exists!');
@@ -179,14 +163,9 @@ export class User {
     }
   }
 
-  async updateRefreshToken(refreshToken?: string) {
+  updateRefreshToken(refreshToken?: string) {
     this.refreshToken = refreshToken || this.refreshToken || this.createRefreshToken();
 
-    await db.connection().query(
-      'UPDATE enterprise.account \
-       SET refresh_token = $1 \
-       WHERE account_id = $2',
-      [this.refreshToken, this.id]
-    );
+    return db.updateRefreshToken(this.id, this.refreshToken);
   }
 }
