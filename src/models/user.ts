@@ -39,10 +39,6 @@ export class User {
     this.email = email;
   }
 
-  static generateId(name: string, email: string): User {
-    return new User(uuidv4(), name, email);
-  }
-
   async create(password: string): Promise<this> {
     const argon2Hash = await argon2.hash(User.normalizePassword(password));
 
