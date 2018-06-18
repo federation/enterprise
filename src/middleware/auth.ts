@@ -2,13 +2,14 @@ import { User, AuthenticationError, TokenVerificationError } from '../models/use
 
 import Koa from 'koa';
 import Router from 'koa-router';
+import HttpStatus from 'http-status';
 
 export async function unauthenticatedHandler(ctx: Koa.Context, next: Function) {
   try {
     await next();
   } catch (err) {
-    if (err.status == 401) {
-      ctx.status = 401;
+    if (err.status === HttpStatus.UNAUTHORIZED) {
+      ctx.status = err.status;
       ctx.body = 'Protected resource';
     } else {
       throw err;
@@ -28,7 +29,7 @@ export async function authenticateUser(ctx: Koa.Context) {
   const params = ctx.request.body;
 
   if (!params.email || !params.password) {
-    ctx.status = 402;
+    ctx.status = HttpStatus.UNAUTHORIZED;
     ctx.body = {
       error: 'Send both email and password',
     };
@@ -40,7 +41,7 @@ export async function authenticateUser(ctx: Koa.Context) {
     ctx.state.user = await User.authenticate(params.email, params.password);
   } catch (e) {
     if (e instanceof AuthenticationError) {
-      ctx.response.status = 402;
+      ctx.response.status = HttpStatus.UNAUTHORIZED;
       ctx.response.redirect('/login');
     } else {
       throw e;
@@ -97,7 +98,7 @@ export function verifyAccessToken(ctx: Koa.Context) {
     ctx.state.user = User.verifyToken(token);
   } catch (e) {
     if (e instanceof TokenVerificationError) {
-      ctx.response.status = 402;
+      ctx.response.status = HttpStatus.UNAUTHORIZED;
       ctx.response.redirect('/login');
     } else {
       throw e;
@@ -112,7 +113,7 @@ export async function verifyRefreshToken(ctx: Koa.Context) {
 
       ctx.state.user = user;
     } catch (e) {
-      ctx.status = 402;
+      ctx.status = HttpStatus.UNAUTHORIZED;
       ctx.body = 'Not authenticated';
     }
   }

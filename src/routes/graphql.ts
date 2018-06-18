@@ -3,6 +3,7 @@ import path from 'path';
 
 import Koa from 'koa';
 import Router from 'koa-router';
+import HttpStatus from 'http-status';
 
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
 import { IResolvers, makeExecutableSchema } from 'graphql-tools';
