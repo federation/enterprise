@@ -9,7 +9,6 @@ import Router from 'koa-router';
 import { config } from './config';
 import { logger } from './logger';
 
-import UserRoutes from './routes/user';
 import GraphQLRoutes from './routes/graphql';
 
 import * as auth from './middleware/auth';
@@ -40,9 +39,6 @@ app.use(koaBody({
 
 app.use(GraphQLRoutes.routes());
 app.use(GraphQLRoutes.allowedMethods());
-
-app.use(UserRoutes.routes());
-app.use(UserRoutes.allowedMethods());
 
 app.listen(config().PORT, config().HOST);
 
