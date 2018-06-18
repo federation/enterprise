@@ -170,37 +170,14 @@ export class User {
     }
   }
 
-  async updateRefreshToken(refreshToken?: string): Promise<UpdateUserRefreshToken> {
-    if (!refreshToken) {
-      refreshToken = this.createRefreshToken();
-    }
+  async updateRefreshToken(refreshToken?: string) {
+    this.refreshToken = refreshToken || this.refreshToken || this.createRefreshToken();
 
-    const user = await UpdateUserRefreshToken.query(this.id, refreshToken);
-
-    return user;
-  }
-}
-
-export class UpdateUserRefreshToken extends User {
-  readonly refreshToken: string
-
-  private constructor(user: UpdateUserRefreshToken) {
-    super(user.id, user.name, user.email);
-
-    this.refreshToken = user.refreshToken;
-  }
-
-  static async query(id: string, refreshToken: string): Promise<UpdateUserRefreshToken> {
-    const result = await db.connection().query(
+    await db.connection().query(
       'UPDATE enterprise.account \
        SET refresh_token = $1 \
-       WHERE account_id = $2 \
-       RETURNING account_id AS id, name, email, refresh_token AS refreshToken',
-      [refreshToken, id]
+       WHERE account_id = $2',
+      [this.refreshToken, this.id]
     );
-
-    const row: UpdateUserRefreshToken = result.rows[0];
-
-    return new UpdateUserRefreshToken(row);
   }
 }
