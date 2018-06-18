@@ -25,5 +25,3 @@ export function connection() {
 
   return pool_;
 }
-
-// TODO: Find opportunities to DRY.
