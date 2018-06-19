@@ -113,7 +113,7 @@ export function verifyAccessToken(ctx: Koa.Context, next: Function) {
 
   // TODO: Ensure this terminates and prevents further middleware from executing.
   try {
-    ctx.state.user = User.verifyAccessToken(token);
+    ctx.state.user = User.fromAccessToken(token);
 
     return next();
   } catch (e) {

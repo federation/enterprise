@@ -34,7 +34,7 @@ const resolvers: IResolvers = {
       const token = tokenHeader.replace('Bearer ', '');
 
       try {
-        koa.state.user = User.verifyAccessToken(token);
+        koa.state.user = User.fromAccessToken(token);
 
         return koa.state.user;
       } catch (e) {

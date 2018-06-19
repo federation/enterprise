@@ -186,7 +186,7 @@ export class User implements Properties {
   }
 
   // TODO: https://github.com/auth0/node-jsonwebtoken#errors--codes
-  static verifyAccessToken(token: string): User {
+  static fromAccessToken(token: string): User {
     try {
       const user = jwt.verify(token, config().JWT_SECRET) as AccessTokenPayload;
 
