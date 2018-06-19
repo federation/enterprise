@@ -7,7 +7,6 @@ import uuidv4 from 'uuid/v4';
 import * as db from '../db';
 import { config } from '../config';
 import { AuthenticationError, TokenVerificationError } from '../errors';
-import { rowToProperties } from '../common';
 
 interface TokenPayload {
   readonly id: string;
@@ -24,57 +23,133 @@ interface RefreshTokenPayload extends TokenPayload {
   readonly tokenType: 'refresh';
 }
 
-interface UserRequiredFields {
-  readonly name: string;
-  readonly email: string;
+export interface Properties {
+  id?: string;
+  name?: string;
+  email?: string;
+
+  refreshToken?: string;
+  password?: string;
+  createdAt?: Date;
 }
 
-export class User {
-  readonly id: string;
-  readonly name: string;
-  readonly email: string;
+interface Identifiable {
+  id: string;
+}
+
+interface Authenticateable {
+  name: string;
+  password: string;
+}
+
+interface Contactable extends Identifiable {
+  name: string;
+  email: string;
+}
+
+interface Createable extends Contactable {
+  refreshToken: string;
+}
+
+export class User implements Properties {
+  id?: string;
+  name?: string;
+  email?: string;
 
   refreshToken?: string;
   password?: string;
   createdAt?: Date;
 
-  constructor(user: Partial<User> & UserRequiredFields) {
+  constructor(user: Properties) {
     this.id = user.id || uuidv4();
 
     this.name = user.name;
     this.email = user.email;
-
     this.refreshToken = user.refreshToken;
     this.password = user.password;
     this.createdAt = user.createdAt;
   }
 
-  static fromRow<K extends keyof User>(row: any, ...keys: K[]): User {
-    const mappedRow = rowToProperties<User, K>(row, ...keys);
+  isIdentifiable(): this is Identifiable {
+    if (!this.id) {
+      throw new Error('User is not identifiable.');
+    }
 
-    return new User(mappedRow);
+    return true;
   }
 
-  async create(password: string) {
-    const argon2Hash = await argon2.hash(User.normalizePassword(password));
+  isContactable(): this is Contactable {
+    if (!this.isIdentifiable()) {
+      return false;
+    }
+
+    const errorMessage = 'User cannot be contacted. Missing ';
+
+    if (!this.name) {
+      throw new Error(errorMessage + 'name.');
+    }
+
+    if (!this.email) {
+      throw new Error(errorMessage + 'email.');
+    }
+
+    return true;
+  }
+
+  isCreateable(): this is Createable {
+    if (!this.isContactable()) {
+      return false;
+    }
+
+    const errorMessage = 'User cannot be created. Missing ';
+
+    if (!this.refreshToken) {
+      throw new Error(errorMessage + 'refreshToken.');
+    }
+
+    return true;
+  }
+
+  isAuthenticateable(): this is Authenticateable {
+    if (!this.password) {
+      throw new Error('User cannot be authenticated. Missing password.');
+    }
+
+    if (!this.name) {
+      throw new Error('User cannot be authenticated. Missing name.');
+    }
+
+    return true;
+  }
+
+  async create(plainPassword: string) {
+    const argon2Hash = await argon2.hash(User.normalizePassword(plainPassword));
 
     this.refreshToken = this.createRefreshToken();
 
-    await db.user.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
+    if (this.isCreateable()) {
+      await db.user.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
+    }
   }
 
-  static async authenticate(name: string, password: string): Promise<User> {
-    const result = await db.user.getByName(name);
-
-    if (result.rowCount > 1) {
-      throw new Error('More than one user with the same account_id and refresh_token exists!');
+  isAuthenticated(plainPassword: string): Promise<boolean> {
+    if (!this.isAuthenticateable()) {
+      throw new Error('User cannot be authenticated.');
     }
 
-    const user = User.fromRow(result.rows[0], 'id', 'name', 'email', 'password', 'refreshToken');
+    return argon2.verify(this.password, User.normalizePassword(plainPassword));
+  }
 
-    // NOTE: The type assertion operator is used because we guarantee that
-    // password exists above.
-    const isAuthenticated = await argon2.verify(user.password!, User.normalizePassword(password));
+  // TODO: Make this an instance method?
+  // const user = new User({ name, password });
+  // const isAuthenticated = await user.authenticate();
+  //
+  // if (isAuthenticated) { … }
+  static async authenticate(name: string, password: string): Promise<User> {
+    const row = await db.user.getByName(name);
+    const user = new User(row);
+
+    const isAuthenticated = await user.isAuthenticated(password);
 
     if (isAuthenticated) {
       return user;
@@ -84,13 +159,10 @@ export class User {
   }
 
   static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
-    const result = await db.user.getByRefreshToken(id, refreshToken);
+    const row = await db.user.getByRefreshToken(id, refreshToken);
+    const user = new User(row);
 
-    if (result.rowCount > 1) {
-      throw new Error('More than one user with the same account_id and refresh_token exists!');
-    }
-
-    return User.fromRow(result.rows[0], 'id', 'name', 'email', 'password');
+    return user;
   }
 
   static normalizePassword(password: string): string {
@@ -101,6 +173,10 @@ export class User {
   }
 
   createAccessToken(): string {
+    if (!this.isContactable()) {
+      throw new Error("Couldn't create access token");
+    }
+
     const payload: AccessTokenPayload = {
       id: this.id,
       name: this.name,
@@ -133,6 +209,10 @@ export class User {
   }
 
   createRefreshToken() {
+    if (!this.isContactable()) {
+      throw new Error("Couldn't create access token");
+    }
+
     const payload: RefreshTokenPayload = {
       id: this.id,
       name: this.name,
@@ -166,6 +246,8 @@ export class User {
   updateRefreshToken(refreshToken?: string) {
     this.refreshToken = refreshToken || this.refreshToken || this.createRefreshToken();
 
-    return db.user.updateRefreshToken(this.id, this.refreshToken);
+    if (this.isIdentifiable()) {
+      return db.user.updateRefreshToken(this.id, this.refreshToken!);
+    }
   }
 }
