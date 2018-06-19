@@ -66,7 +66,7 @@ class ConsoleFormatter {
   }
 }
 
-if (config().NODE_ENV !== 'production') {
+if (config().NODE_ENV === 'development') {
   winstonLogger.add(new winston.transports.Console({
     handleExceptions: true,
     format: format.combine(
