@@ -22,7 +22,7 @@ describe('Config', () => {
 
   test('throws when missing a required variable', () => {
     expect(() => {
-      const envWithoutRequiredVariables: NodeJS.ProcessEnv = {};
+      const envWithoutRequiredVariables = {};
 
       // eslint-disable-next-line no-unused-vars
       const config = new Config(envWithoutRequiredVariables);
