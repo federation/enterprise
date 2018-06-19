@@ -58,9 +58,7 @@ const resolvers: IResolvers = {
 
       // TODO: Perform other necessary validation.
 
-      logger.info('parent:', parent);
       logger.info('args:', args);
-      logger.info('context:', context);
 
       // TODO: catch
       const user = new User({ name: args.name, email: args.email });
@@ -89,9 +87,7 @@ const resolvers: IResolvers = {
 
       // TODO: Perform other necessary validation.
 
-      logger.info('parent:', parent);
       logger.info('args:', args);
-      logger.info('context:', context);
 
       const user = await User.authenticate(args.name, args.password);
 
