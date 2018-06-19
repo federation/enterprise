@@ -89,7 +89,13 @@ const resolvers: IResolvers = {
 
       logger.info('args:', args);
 
-      const user = await User.authenticate(args.name, args.password);
+      // const user = await User.authenticate(args.name, args.password);
+      const user = new User({ name: args.name });
+      const isAuthenticated = await user.authenticate(args.password);
+
+      if (!isAuthenticated) {
+        throw new Error('Could not authenticate user');
+      }
 
       logger.info('authenticated user:', user);
 

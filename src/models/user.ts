@@ -132,24 +132,16 @@ export class User implements Properties {
     }
   }
 
-  isAuthenticated(plainPassword: string): Promise<boolean> {
+  async authenticate(plainPassword: string): Promise<User> {
     if (!this.isAuthenticateable()) {
       throw new Error('User cannot be authenticated.');
     }
 
-    return argon2.verify(this.password, User.normalizePassword(plainPassword));
-  }
-
-  // TODO: Make this an instance method?
-  // const user = new User({ name, password });
-  // const isAuthenticated = await user.authenticate();
-  //
-  // if (isAuthenticated) { … }
-  static async authenticate(name: string, password: string): Promise<User> {
-    const row = await db.user.getByName(name);
+    const row = await db.user.getByName(this.name);
     const user = new User(row);
 
-    const isAuthenticated = await user.isAuthenticated(password);
+    const normalizedPassword = User.normalizePassword(plainPassword);
+    const isAuthenticated = await argon2.verify(this.password, normalizedPassword);
 
     if (isAuthenticated) {
       return user;

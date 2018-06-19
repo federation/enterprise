@@ -33,7 +33,7 @@ export async function createRefreshToken(ctx: Koa.Context, next: Function) {
 export async function authenticateUser(ctx: Koa.Context, next: Function) {
   const params = ctx.request.body;
 
-  if (!params.email || !params.password) {
+  if (!params.name || !params.password) {
     ctx.status = HttpStatus.UNAUTHORIZED;
     ctx.body = {
       error: 'Send both email and password',
@@ -43,7 +43,14 @@ export async function authenticateUser(ctx: Koa.Context, next: Function) {
   }
 
   try {
-    ctx.state.user = await User.authenticate(params.email, params.password);
+    const user = new User({ name: params.name });
+    const isAuthenticated = user.authenticate(params.password);
+
+    if (isAuthenticated) {
+      ctx.state.user = user;
+    } else {
+      throw new AuthenticationError("Couldn't authenticate user");
+    }
 
     return next();
   } catch (e) {
