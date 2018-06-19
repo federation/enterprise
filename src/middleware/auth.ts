@@ -98,7 +98,7 @@ export async function registerUser(ctx: Koa.Context, next: Function) {
 
     ctx.state.user = user;
   } catch (e) {
-    logger.error('problem registering user', e);
+    logger().error('problem registering user', e);
   }
 }
 

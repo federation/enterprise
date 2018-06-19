@@ -13,21 +13,6 @@ function logPath(log: string): string {
   return path.join(config().LOG_PATH, log);
 }
 
-const winstonLogger = winston.createLogger({
-  level: 'info',
-  format: format.combine(
-    format.timestamp(),
-    format.json()
-  ),
-  transports: [
-    new winston.transports.File({ filename: logPath('error.log'), level: 'error' }),
-    new winston.transports.File({ filename: logPath('combined.log') }),
-  ],
-  exceptionHandlers: [
-    new winston.transports.File({ filename: logPath('exceptions.log') }),
-  ],
-});
-
 interface ConsoleFormatterOptions {
   colorize: boolean;
 }
@@ -66,15 +51,42 @@ class ConsoleFormatter {
   }
 }
 
-if (config().NODE_ENV === 'development') {
-  winstonLogger.add(new winston.transports.Console({
-    handleExceptions: true,
-    format: format.combine(
-      format.colorize(),
-      format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      new ConsoleFormatter(),
-    ),
-  }));
+let logger_: winston.Logger;
+
+export function resetLogger(logger: winston.Logger) {
+  logger_ = logger;
 }
 
-export const logger = winstonLogger;
+// TODO: provide empty logger if in test env
+export function logger(): winston.Logger {
+  if (!logger_) {
+    // TODO: move this to some log init function
+    logger_ = winston.createLogger({
+      level: 'info',
+      format: format.combine(
+        format.timestamp(),
+        format.json()
+      ),
+      transports: [
+        new winston.transports.File({ filename: logPath('error.log'), level: 'error' }),
+        new winston.transports.File({ filename: logPath('combined.log') }),
+      ],
+      exceptionHandlers: [
+        new winston.transports.File({ filename: logPath('exceptions.log') }),
+      ],
+    });
+
+    if (config().NODE_ENV === 'development') {
+      logger_.add(new winston.transports.Console({
+        handleExceptions: true,
+        format: format.combine(
+          format.colorize(),
+          format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+          new ConsoleFormatter(),
+        ),
+      }));
+    }
+  }
+
+  return logger_;
+}

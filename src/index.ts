@@ -13,7 +13,7 @@ import GraphQLRoutes from './routes/graphql';
 
 import * as auth from './middleware/auth';
 
-logger.info('Starting Koa server', { host: config().HOST, port: config().PORT });
+logger().info('Starting Koa server', { host: config().HOST, port: config().PORT });
 
 const app = new Koa();
 
@@ -22,12 +22,12 @@ app.use(koaLogger({
     const [ , method, path, status, time, size ] = args;
 
     if (!status) {
-      logger.info(`Requested ${method} ${path}`);
+      logger().info(`Requested ${method} ${path}`);
     } else {
-      logger.info(`Responded ${method} ${path} ${status} ${time} ${size}`);
+      logger().info(`Responded ${method} ${path} ${status} ${time} ${size}`);
     }
-  }
-}))
+  },
+}));
 
 // TODO: This runs before the request is actually finished. It'll consider a
 // request done as soon as reverse proxy starts receiving it? but the koa-logger
@@ -40,7 +40,7 @@ async function requestLogger(ctx: Koa.Context, next: Function) {
   const time = Date.now() - start;
   const size = '0kb';
 
-  logger.info(`${ctx.method} ${ctx.path} ${ctx.status} ${time} ${size}`);
+  logger().info(`${ctx.method} ${ctx.path} ${ctx.status} ${time} ${size}`);
 }
 
 app.use(requestLogger);
@@ -49,8 +49,8 @@ app.use(auth.unauthenticatedHandler);
 
 app.use(koaBody({
   extendTypes: {
-    text: ['application/graphql']
-  }
+    text: ['application/graphql'],
+  },
 }));
 
 app.use(GraphQLRoutes.routes());
@@ -58,4 +58,4 @@ app.use(GraphQLRoutes.allowedMethods());
 
 app.listen(config().PORT, config().HOST);
 
-logger.info(`Running on http://${config().HOST}:${config().PORT}`);
+logger().info(`Running on http://${config().HOST}:${config().PORT}`);

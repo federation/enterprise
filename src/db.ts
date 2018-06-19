@@ -6,20 +6,20 @@ import { Properties as UserProperties } from './models/user';
 
 let pool_: pg.Pool;
 
-export function connection() {
+export function connection(): pg.Pool {
   if (!pool_) {
     pool_ = new pg.Pool();
 
     pool_.on('acquire', (_client) => {
-      logger.info('Acquired client from the PostgreSQL connection pool.');
+      logger().info('Acquired client from the PostgreSQL connection pool.');
     });
 
     pool_.on('remove', (_client) => {
-      logger.info('Removed client from the PostgreSQL connection pool.');
+      logger().info('Removed client from the PostgreSQL connection pool.');
     });
 
     pool_.on('error', (err, _client) => {
-      logger.error('Unexpected error on idle PostgreSQL client.', err);
+      logger().error('Unexpected error on idle PostgreSQL client.', err);
 
       process.exit(-1);
     });
@@ -31,7 +31,7 @@ export function connection() {
 export async function query(text: string, params?: any[]): Promise<pg.QueryResult> {
   const result = await connection().query(text, params);
 
-  logger.info('PostgreSQL Query', {
+  logger().info('PostgreSQL Query', {
     query: text,
     params,
     rowCount: result.rowCount,

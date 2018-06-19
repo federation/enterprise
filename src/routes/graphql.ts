@@ -58,18 +58,18 @@ const resolvers: IResolvers = {
 
       // TODO: Perform other necessary validation.
 
-      logger.info('args:', args);
+      logger().info('args:', args);
 
       // TODO: catch
       const user = new User({ name: args.name, email: args.email });
 
       await user.create(args.password);
 
-      logger.info('created user:', user);
+      logger().info('created user:', user);
 
       const accessToken = user.createAccessToken();
 
-      logger.info('created access token:', accessToken);
+      logger().info('created access token:', accessToken);
 
       return {
         accessToken,
@@ -87,7 +87,7 @@ const resolvers: IResolvers = {
 
       // TODO: Perform other necessary validation.
 
-      logger.info('args:', args);
+      logger().info('args:', args);
 
       // const user = await User.authenticate(args.name, args.password);
       const user = new User({ name: args.name });
@@ -97,7 +97,7 @@ const resolvers: IResolvers = {
         throw new Error('Could not authenticate user');
       }
 
-      logger.info('authenticated user:', user);
+      logger().info('authenticated user:', user);
 
       const accessToken = user.createAccessToken();
 
@@ -119,7 +119,7 @@ const schema = makeExecutableSchema({
   resolvers,
   logger: {
     log(e: any) {
-      logger.error(e);
+      logger().error(e);
     },
   },
 });
