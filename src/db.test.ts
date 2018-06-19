@@ -2,7 +2,7 @@
 /* eslint-disable import/imports-first */
 /* eslint-disable import/no-imports-first */
 
-import pg from 'pg';
+import * as pg from 'pg';
 
 import { resetConfig, Config } from './config';
 
@@ -18,43 +18,53 @@ interface Person {
 describe('db', () => {
   describe('expectRow', () => {
     test('it should get a single row', () => {
-      const result: pg.QueryResult = {
+      const singleRowResult: pg.QueryResult = {
         rows: [{ name: 'bob', age: 18 }],
         rowCount: 1,
+        command: null,
+        oid: null,
+        fields: null,
       };
 
-      const person: Person = db.expectRow(result, 'name', 'age');
+      const person: Person = db.expectRow(singleRowResult, 'name', 'age');
 
       expect(person.name).toBe('bob');
       expect(person.age).toBe(18);
     });
 
     test('it should throw on more than one row', () => {
-      const result: pg.QueryResult = {
+      const multiRowResult: pg.QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
           { name: 'alice', age: 19 },
         ],
         rowCount: 2,
+        command: null,
+        oid: null,
+        fields: null,
       };
 
       expect(() => {
-        const person: Person = db.expectRow(result, 'name', 'age');
+        // eslint-disable-next-line no-unused-vars
+        const person: Person = db.expectRow(multiRowResult, 'name', 'age');
       }).toThrow();
     });
   });
 
   describe('expectRows', () => {
     test('it should get multiple rows', () => {
-      const result: pg.QueryResult = {
+      const multiRowResult: pg.QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
           { name: 'alice', age: 19 },
         ],
         rowCount: 2,
+        command: null,
+        oid: null,
+        fields: null,
       };
 
-      const people: Person[] = db.expectRows(result, 'name', 'age');
+      const people: Person[] = db.expectRows(multiRowResult, 'name', 'age');
 
       expect(people).toHaveLength(2);
 
