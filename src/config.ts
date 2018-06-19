@@ -64,6 +64,10 @@ export class Config implements Options, Requirements {
 
 let config_: Config;
 
+export function resetConfig(config: Config) {
+  config_ = config;
+}
+
 export function config() {
   if (!config_) {
     config_ = new Config(process.env);
