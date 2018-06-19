@@ -15,11 +15,11 @@ export const DefaultOptions: Options = {
   PORT: 8080,
   HOST: '0.0.0.0',
   NODE_ENV: 'development',
-  LOG_PATH: path.join(__dirname, '../logs')
+  LOG_PATH: path.join(__dirname, '../logs'),
 };
 
 export const RequiredOptions = [
-  'JWT_SECRET'
+  'JWT_SECRET',
 ];
 
 export class Config implements Options, Requirements {
@@ -51,9 +51,9 @@ export class Config implements Options, Requirements {
     if (typeof orDefault === 'undefined') {
       if (key in this.environment) {
         return this.environment[key];
-      } else {
-        throw new Error(`Missing required environment variable: ${key}`);
       }
+
+      throw new Error(`Missing required environment variable: ${key}`);
     } else if (orDefault instanceof Function) {
       return this.environment[key] || orDefault();
     } else {
