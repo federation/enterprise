@@ -235,9 +235,7 @@ export class User implements Properties {
     }
   }
 
-  updateRefreshToken(refreshToken?: string) {
-    this.refreshToken = refreshToken || this.refreshToken || this.createRefreshToken();
-
+  updateRefreshToken() {
     if (this.isIdentifiable()) {
       return db.user.updateRefreshToken(this.id, this.refreshToken!);
     }
