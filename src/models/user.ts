@@ -221,7 +221,7 @@ export class User implements Properties {
     return jwt.sign(payload, config().JWT_SECRET, metadata);
   }
 
-  static verifyRefreshToken(token: string): User {
+  static fromRefreshToken(token: string): User {
     try {
       const user = jwt.verify(token, config().JWT_SECRET) as RefreshTokenPayload;
 
