@@ -165,8 +165,8 @@ export class User implements Properties {
     return user;
   }
 
-  static normalizePassword(password: string): string {
-    const sha512Hash = crypto.createHash('sha512').update(password);
+  static normalizePassword(plainPassword: string): string {
+    const sha512Hash = crypto.createHash('sha512').update(plainPassword);
     const base64Hash = sha512Hash.digest('base64');
 
     return base64Hash;
