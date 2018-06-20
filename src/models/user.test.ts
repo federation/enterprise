@@ -18,8 +18,8 @@ describe('User', () => {
 
   describe('type guards', () => {
     test('can be Identifiable', () => {
-      const identifiable = new User({});
-      const unidentifiable = new User({});
+      const identifiable = new User();
+      const unidentifiable = new User();
 
       delete unidentifiable.id;
 
@@ -29,7 +29,7 @@ describe('User', () => {
 
     test('can be Contactable', () => {
       const contactable = new User({ name: 'bob', email: 'bob@loblaw.com' });
-      const notContactable = new User({});
+      const notContactable = new User();
 
       expect(contactable.isContactable()).toBeTruthy();
       expect(notContactable.isContactable()).toBeFalsy();
@@ -37,7 +37,7 @@ describe('User', () => {
 
     test('can be Createable', () => {
       const createable = new User({ name: 'bob', email: 'bob@loblaw.com', refreshToken: 'refresh' });
-      const notCreateable = new User({});
+      const notCreateable = new User();
 
       expect(createable.isCreateable()).toBeTruthy();
       expect(notCreateable.isCreateable()).toBeFalsy();
@@ -45,7 +45,7 @@ describe('User', () => {
 
     test('can be Authenticateable', () => {
       const authenticateable = new User({ name: 'bob', password: 'hunter2' });
-      const notAuthenticateable = new User({});
+      const notAuthenticateable = new User();
 
       expect(authenticateable.isAuthenticateable()).toBeTruthy();
       expect(notAuthenticateable.isAuthenticateable()).toBeFalsy();
@@ -111,7 +111,7 @@ describe('User', () => {
     });
 
     test('rejects non-Authenticateable user', async () => {
-      const user = new User({});
+      const user = new User();
 
       expect(user.isAuthenticateable()).toBeFalsy();
       await expect(user.authenticate('hunter2')).rejects.toThrow();
@@ -121,7 +121,7 @@ describe('User', () => {
   describe('tokens', () => {
     describe('access', () => {
       test('rejects creating non-Contactable user', () => {
-        const user = new User({});
+        const user = new User();
 
         expect(user.isContactable()).toBeFalsy();
         expect(() => user.createAccessToken()).toThrow();
@@ -161,14 +161,14 @@ describe('User', () => {
 
     describe('refresh', () => {
       test('rejects creating for non-Contactable user', () => {
-        const user = new User({});
+        const user = new User();
 
         expect(user.isContactable()).toBeFalsy();
         expect(() => user.createRefreshToken()).toThrow();
       });
 
       test('rejects updating for non-Identifiable user', async () => {
-        const user = new User({});
+        const user = new User();
 
         expect(user.isRefreshable()).toBeFalsy();
 

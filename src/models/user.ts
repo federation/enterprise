@@ -62,7 +62,7 @@ export class User implements Properties {
   password?: string;
   createdAt?: Date;
 
-  constructor(user: Properties) {
+  constructor(user: Properties = {}) {
     this.id = user.id || uuidv4();
 
     this.name = user.name;
