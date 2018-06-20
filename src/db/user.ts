@@ -1,7 +1,6 @@
 import * as db from './db';
 import { Properties } from '../models/user';
 
-// TODO: move this to User.js in db.* namespace?
 export async function create(
   id: string,
   name: string,
