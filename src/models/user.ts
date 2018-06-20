@@ -153,17 +153,13 @@ export class User implements Properties {
 
   // TODO: https://github.com/auth0/node-jsonwebtoken#errors--codes
   static fromAccessToken(token: string): User {
-    try {
-      const user = jwt.verify(token, config().JWT_SECRET) as AccessTokenPayload;
+    const user = jwt.verify(token, config().JWT_SECRET) as AccessTokenPayload;
 
-      if (user.tokenType !== 'access') {
-        throw new TokenVerificationError('Not an access token');
-      }
-
-      return new User(user);
-    } catch (e) {
-      throw new TokenVerificationError("Couldn't verify the JWT");
+    if (user.tokenType !== 'access') {
+      throw new TokenVerificationError('Not an access token');
     }
+
+    return new User(user);
   }
 
   createRefreshToken() {
@@ -188,17 +184,13 @@ export class User implements Properties {
   }
 
   static fromRefreshToken(token: string): User {
-    try {
-      const user = jwt.verify(token, config().JWT_SECRET) as RefreshTokenPayload;
+    const user = jwt.verify(token, config().JWT_SECRET) as RefreshTokenPayload;
 
-      if (user.tokenType !== 'refresh') {
-        throw new TokenVerificationError('Not a refresh token');
-      }
-
-      return new User(user);
-    } catch (e) {
-      throw new TokenVerificationError("Couldn't verify the JWT");
+    if (user.tokenType !== 'refresh') {
+      throw new TokenVerificationError('Not a refresh token');
     }
+
+    return new User(user);
   }
 
   updateRefreshToken() {
