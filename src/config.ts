@@ -11,6 +11,12 @@ interface Requirements {
   readonly JWT_SECRET: string;
 }
 
+interface Configuration extends Options, Requirements {}
+
+interface Environment {
+  [variable: string]: string | undefined;
+}
+
 export const DefaultOptions: Options = {
   PORT: 8080,
   HOST: '0.0.0.0',
@@ -18,18 +24,17 @@ export const DefaultOptions: Options = {
   LOG_PATH: path.join(__dirname, '../logs'),
 };
 
-const TestOptions: Options & Requirements = {
+const TestEnvironment: Environment = {
   JWT_SECRET: 'jwt-secret',
   NODE_ENV: 'test',
-  ...DefaultOptions,
 };
 
 export const RequiredOptions = [
   'JWT_SECRET',
 ];
 
-export class Config implements Options, Requirements {
-  private environment: any;
+export class Config implements Configuration {
+  private environment: Environment;
 
   // Required
   readonly JWT_SECRET: string;
@@ -40,7 +45,7 @@ export class Config implements Options, Requirements {
   readonly NODE_ENV: string;
   readonly LOG_PATH: string;
 
-  constructor(environment: NodeJS.ProcessEnv) {
+  constructor(environment: Environment) {
     this.environment = environment;
 
     // Required
@@ -76,9 +81,9 @@ export function setConfig(config: Config) {
 
 export function config() {
   if (!config_) {
-    const env = process.env.NODE_ENV === 'test' ? TestOptions : process.env;
+    const env = process.env.NODE_ENV === 'test' ? TestEnvironment : process.env;
 
-    config_ = new Config(env as NodeJS.ProcessEnv);
+    config_ = new Config(env);
   }
 
   return config_;
