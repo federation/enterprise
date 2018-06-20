@@ -61,7 +61,7 @@ describe('User', () => {
       query.create.mockReset();
     });
 
-    test('creates Createable users', async () => {
+    test('creates Createable user', async () => {
       const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
 
       await user.create('hunter2');
@@ -79,7 +79,7 @@ describe('User', () => {
       expect(user.refreshToken).toBeDefined();
     });
 
-    test("rejects users for which it can't create a refresh token", async () => {
+    test("rejects user for which it can't create a refresh token", async () => {
       const user = new User({ name: 'bob' });
 
       expect(user.isCreateable()).toBeFalsy();
@@ -95,21 +95,22 @@ describe('User', () => {
       argon2.verify.mockReset();
     });
 
-    test('authenticates Authenticateable users with valid credentials', async () => {
+    // FIXME: These tests seem pointless.
+    test('authenticates Authenticateable user with valid credentials', async () => {
       const user = new User({ name: 'bob', password: User.normalizePassword('hunter2') });
 
       expect(user.isAuthenticateable()).toBeTruthy();
       await expect(user.authenticate('hunter2')).resolves.toBeTruthy();
     });
 
-    test('rejects Authenticateable users with invalid credentials', async () => {
+    test('rejects Authenticateable user with invalid credentials', async () => {
       const user = new User({ name: 'bob', password: User.normalizePassword('hunter2') });
 
       expect(user.isAuthenticateable()).toBeTruthy();
       await expect(user.authenticate('badpass')).resolves.toBeFalsy();
     });
 
-    test('rejects non-Authenticateable users', async () => {
+    test('rejects non-Authenticateable user', async () => {
       const user = new User({});
 
       expect(user.isAuthenticateable()).toBeFalsy();
