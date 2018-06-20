@@ -17,7 +17,7 @@ describe('User', () => {
   });
 
   describe('type guards', () => {
-    test('can be considered Identifiable', () => {
+    test('can be Identifiable', () => {
       const identifiable = new User({});
       const unidentifiable = new User({});
 
@@ -27,7 +27,7 @@ describe('User', () => {
       expect(unidentifiable.isIdentifiable()).toBeFalsy();
     });
 
-    test('can be considered Contactable', () => {
+    test('can be Contactable', () => {
       const contactable = new User({ name: 'bob', email: 'bob@loblaw.com' });
       const notContactable = new User({});
 
@@ -35,7 +35,7 @@ describe('User', () => {
       expect(notContactable.isContactable()).toBeFalsy();
     });
 
-    test('can be considered Createable', () => {
+    test('can be Createable', () => {
       const createable = new User({ name: 'bob', email: 'bob@loblaw.com', refreshToken: 'refresh' });
       const notCreateable = new User({});
 
@@ -43,7 +43,7 @@ describe('User', () => {
       expect(notCreateable.isCreateable()).toBeFalsy();
     });
 
-    test('can be considered Authenticateable', () => {
+    test('can be Authenticateable', () => {
       const authenticateable = new User({ name: 'bob', password: 'hunter2' });
       const notAuthenticateable = new User({});
 
