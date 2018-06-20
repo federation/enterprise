@@ -18,14 +18,17 @@ describe('db', () => {
       spy.mockReset();
     });
 
+    function queryParams(spy) {
+      return spy.mock.calls[0][1];
+    }
+
     test('create', async () => {
       // eslint-disable-next-line no-undefined
       spy.mockResolvedValue(undefined);
 
       await query.create(user.id, user.name, user.email, user.password, user.refreshToken);
 
-      expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][1]).toEqual([user.id, user.name, user.email, user.password, user.refreshToken]);
+      expect(queryParams(spy)).toEqual([user.id, user.name, user.email, user.password, user.refreshToken]);
     });
 
     test('getByName', async () => {
@@ -39,7 +42,8 @@ describe('db', () => {
       const result = await query.getByName('bob');
 
       expect(result).toBe(user);
-      expect(spy.mock.calls[0][1]).toEqual(['bob']);
+
+      expect(queryParams(spy)).toEqual(['bob']);
     });
 
     test('getByRefreshToken', async () => {
@@ -53,7 +57,8 @@ describe('db', () => {
       const result = await query.getByRefreshToken(user.id, user.refreshToken);
 
       expect(result).toBe(user);
-      expect(spy.mock.calls[0][1]).toEqual([user.id, user.refreshToken]);
+
+      expect(queryParams(spy)).toEqual([user.id, user.refreshToken]);
     });
 
     test('updateRefreshToken', async () => {
@@ -62,8 +67,7 @@ describe('db', () => {
 
       await query.updateRefreshToken(user.id, user.refreshToken);
 
-      expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][1]).toEqual([user.refreshToken, user.id]);
+      expect(queryParams(spy)).toEqual([user.refreshToken, user.id]);
     });
   });
 });
