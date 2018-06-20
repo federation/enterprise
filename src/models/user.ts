@@ -168,7 +168,7 @@ export class User implements Properties {
 
   createRefreshToken() {
     if (!this.isContactable()) {
-      throw new Error("Couldn't create access token");
+      throw new Error("Couldn't create refresh token");
     }
 
     const payload: RefreshTokenPayload = {
