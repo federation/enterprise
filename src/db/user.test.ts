@@ -2,10 +2,6 @@
 /* eslint-disable import/imports-first */
 /* eslint-disable import/no-imports-first */
 
-import { setConfig, Config } from '../config';
-
-setConfig(new Config({ JWT_SECRET: 'hunter2' }));
-
 import * as db from './db';
 import * as query from './user';
 

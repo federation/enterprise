@@ -4,10 +4,6 @@
 
 import { QueryResult } from 'pg';
 
-import { setConfig, Config } from '../config';
-
-setConfig(new Config({ JWT_SECRET: 'hunter2' }));
-
 import * as db from './db';
 
 interface Person {

@@ -18,6 +18,12 @@ export const DefaultOptions: Options = {
   LOG_PATH: path.join(__dirname, '../logs'),
 };
 
+const TestOptions: Options & Requirements = {
+  JWT_SECRET: 'jwt-secret',
+  NODE_ENV: 'test',
+  ...DefaultOptions,
+};
+
 export const RequiredOptions = [
   'JWT_SECRET',
 ];
@@ -70,7 +76,9 @@ export function setConfig(config: Config) {
 
 export function config() {
   if (!config_) {
-    config_ = new Config(process.env);
+    const env = process.env.NODE_ENV === 'test' ? TestOptions : process.env;
+
+    config_ = new Config(env as NodeJS.ProcessEnv);
   }
 
   return config_;
