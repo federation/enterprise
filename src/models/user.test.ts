@@ -167,13 +167,10 @@ describe('User', () => {
         expect(() => user.createRefreshToken()).toThrow();
       });
 
-      // TODO: create interface Refreshable and check that instead
       test('rejects updating for non-Identifiable user', async () => {
         const user = new User({});
 
-        delete user.id;
-
-        expect(user.isIdentifiable()).toBeFalsy();
+        expect(user.isRefreshable()).toBeFalsy();
 
         await expect(user.updateRefreshToken()).rejects.toThrow();
       });

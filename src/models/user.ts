@@ -33,13 +33,17 @@ export interface Properties {
   createdAt?: Date;
 }
 
+interface Authenticateable {
+  name: string;
+  password: string;
+}
+
 interface Identifiable {
   id: string;
 }
 
-interface Authenticateable {
-  name: string;
-  password: string;
+interface Refreshable extends Identifiable {
+  refreshToken: string;
 }
 
 interface Contactable extends Identifiable {
@@ -47,9 +51,7 @@ interface Contactable extends Identifiable {
   email: string;
 }
 
-interface Createable extends Contactable {
-  refreshToken: string;
-}
+interface Createable extends Contactable, Refreshable {}
 
 export class User implements Properties {
   id?: string;
@@ -74,12 +76,16 @@ export class User implements Properties {
     return Boolean(this.id);
   }
 
+  isRefreshable(): this is Refreshable {
+    return this.isIdentifiable() && Boolean(this.refreshToken);
+  }
+
   isContactable(): this is Contactable {
     return this.isIdentifiable() && Boolean(this.name) && Boolean(this.email);
   }
 
   isCreateable(): this is Createable {
-    return this.isContactable() && Boolean(this.refreshToken);
+    return this.isContactable() && this.isRefreshable();
   }
 
   isAuthenticateable(): this is Authenticateable {
@@ -200,10 +206,10 @@ export class User implements Properties {
   }
 
   async updateRefreshToken(): Promise<void> {
-    if (!this.isIdentifiable()) {
+    if (!this.isRefreshable()) {
       throw new Error('User is not Identifiable');
     }
 
-    return query.updateRefreshToken(this.id, this.refreshToken!);
+    return query.updateRefreshToken(this.id, this.refreshToken);
   }
 }
