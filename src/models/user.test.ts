@@ -86,22 +86,19 @@ describe('User', () => {
   });
 
   describe('authenticate', () => {
-    argon2.verify.mockImplementation((hashed, normalized) => hashed === normalized);
+    const password = '$argon2i$v=19$m=4096,t=3,p=1$K2B2ETSDq7GtE9QQEya+Pg$rTRVmHh/3/kEYhBSyJe76MWOje4gtiDgC3Mlz+c9HGU';
 
-    afterEach(() => {
-      argon2.verify.mockReset();
-    });
-
-    // FIXME: These tests seem pointless.
+    // TODO: I'm not sure if it's correct to be testing the actual
+    // argon2.verify() operation here.
     test('authenticates Authenticateable user with valid credentials', async () => {
-      const user = new User({ name: 'bob', password: User.normalizePassword('hunter2') });
+      const user = new User({ name: 'bob', password });
 
       expect(user.isAuthenticateable()).toBeTruthy();
       await expect(user.authenticate('hunter2')).resolves.toBeTruthy();
     });
 
     test('rejects Authenticateable user with invalid credentials', async () => {
-      const user = new User({ name: 'bob', password: User.normalizePassword('hunter2') });
+      const user = new User({ name: 'bob', password });
 
       expect(user.isAuthenticateable()).toBeTruthy();
       await expect(user.authenticate('badpass')).resolves.toBeFalsy();
