@@ -62,14 +62,24 @@ describe('User', () => {
     });
 
     test('creates Createable users', async () => {
-      const user = new User({ name: 'bob', email: 'bob@loblaw.com', refreshToken: 'refresh' });
+      const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
 
       await user.create('hunter2');
 
       expect(query.create).toHaveBeenCalledWith(user.id, user.name, user.email, 'hashed', user.refreshToken);
     });
 
-    test("rejects users which can't create a refresh token", async () => {
+    test('creates a refresh token', async () => {
+      const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
+
+      expect(user.refreshToken).not.toBeDefined();
+
+      await user.create('hunter2');
+
+      expect(user.refreshToken).toBeDefined();
+    });
+
+    test("rejects users for which it can't create a refresh token", async () => {
       const user = new User({ name: 'bob' });
 
       expect(user.isCreateable()).toBeFalsy();
