@@ -11,7 +11,6 @@ import * as query from './user';
 
 describe('db', () => {
   describe('user', () => {
-    // FIXME: need to suppress logger
     test('getByName', async () => {
       const user = {
         id: 'abc',

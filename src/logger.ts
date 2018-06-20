@@ -2,6 +2,7 @@ import path from 'path';
 import util from 'util';
 
 import winston from 'winston';
+import Transport from 'winston-transport';
 import logform, { format } from 'logform';
 
 import _ from 'lodash';
@@ -51,16 +52,29 @@ class ConsoleFormatter {
   }
 }
 
+export class NullTransport extends Transport {
+  log(info: any, callback: any) {
+    callback();
+  }
+}
+
 let logger_: winston.Logger;
 
 export function setLogger(logger: winston.Logger) {
   logger_ = logger;
 }
 
-// TODO: provide empty logger if in test env
 export function logger(): winston.Logger {
   if (!logger_) {
-    // TODO: move this to some log init function
+    if (config().NODE_ENV === 'test') {
+      logger_ = winston.createLogger({
+        silent: true,
+        transports: [new NullTransport()],
+      });
+
+      return logger_;
+    }
+
     logger_ = winston.createLogger({
       level: 'info',
       format: format.combine(
