@@ -71,55 +71,19 @@ export class User implements Properties {
   }
 
   isIdentifiable(): this is Identifiable {
-    if (!this.id) {
-      throw new Error('User is not identifiable.');
-    }
-
-    return true;
+    return Boolean(this.id);
   }
 
   isContactable(): this is Contactable {
-    if (!this.isIdentifiable()) {
-      return false;
-    }
-
-    const errorMessage = 'User cannot be contacted. Missing ';
-
-    if (!this.name) {
-      throw new Error(errorMessage + 'name.');
-    }
-
-    if (!this.email) {
-      throw new Error(errorMessage + 'email.');
-    }
-
-    return true;
+    return this.isIdentifiable() && Boolean(this.name) && Boolean(this.email);
   }
 
   isCreateable(): this is Createable {
-    if (!this.isContactable()) {
-      return false;
-    }
-
-    const errorMessage = 'User cannot be created. Missing ';
-
-    if (!this.refreshToken) {
-      throw new Error(errorMessage + 'refreshToken.');
-    }
-
-    return true;
+    return this.isContactable() && Boolean(this.refreshToken);
   }
 
   isAuthenticateable(): this is Authenticateable {
-    if (!this.password) {
-      throw new Error('User cannot be authenticated. Missing password.');
-    }
-
-    if (!this.name) {
-      throw new Error('User cannot be authenticated. Missing name.');
-    }
-
-    return true;
+    return Boolean(this.password) && Boolean(this.name);
   }
 
   async create(plainPassword: string) {
@@ -127,27 +91,29 @@ export class User implements Properties {
 
     this.refreshToken = this.createRefreshToken();
 
-    if (this.isCreateable()) {
-      await query.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
+    if (!this.isCreateable()) {
+      throw new Error('User is not createable!');
     }
+
+    return query.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
   }
 
-  async authenticate(plainPassword: string): Promise<User> {
+  async authenticate(plainPassword: string): Promise<boolean> {
     if (!this.isAuthenticateable()) {
       throw new Error('User cannot be authenticated.');
     }
 
-    const row = await query.getByName(this.name);
+    const normalizedPassword = User.normalizePassword(plainPassword);
+
+    // TODO: delete this.password; on success?
+    return argon2.verify(this.password, normalizedPassword);
+  }
+
+  static async getByName(name: string): Promise<User> {
+    const row = await query.getByName(name);
     const user = new User(row);
 
-    const normalizedPassword = User.normalizePassword(plainPassword);
-    const isAuthenticated = await argon2.verify(this.password, normalizedPassword);
-
-    if (isAuthenticated) {
-      return user;
-    }
-
-    throw new AuthenticationError('Authentication failed');
+    return user;
   }
 
   static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
@@ -236,8 +202,10 @@ export class User implements Properties {
   }
 
   updateRefreshToken() {
-    if (this.isIdentifiable()) {
-      return query.updateRefreshToken(this.id, this.refreshToken!);
+    if (!this.isIdentifiable()) {
+      throw new Error('User is not identifiable!');
     }
+
+    return query.updateRefreshToken(this.id, this.refreshToken!);
   }
 }
