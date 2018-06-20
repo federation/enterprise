@@ -28,7 +28,7 @@ describe('db', () => {
   });
 
   describe('connection', () => {
-    test('it registers event handlers', () => {
+    test('registers pool event handlers', () => {
       // eslint-disable-next-line no-unused-vars
       const pool = db.connection();
 
