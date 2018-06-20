@@ -2,9 +2,9 @@
 /* eslint-disable import/imports-first */
 /* eslint-disable import/no-imports-first */
 
-import * as pg from 'pg';
+import { QueryResult } from 'pg';
 
-import { resetConfig, Config } from './config';
+import { resetConfig, Config } from '../config';
 
 resetConfig(new Config({ JWT_SECRET: 'hunter2' }));
 
@@ -18,7 +18,7 @@ interface Person {
 describe('db', () => {
   describe('expectRow', () => {
     test('it should get a single row', () => {
-      const singleRowResult: pg.QueryResult = {
+      const singleRowResult: QueryResult = {
         rows: [{ name: 'bob', age: 18 }],
         rowCount: 1,
         command: null,
@@ -33,7 +33,7 @@ describe('db', () => {
     });
 
     test('it should throw on more than one row', () => {
-      const multiRowResult: pg.QueryResult = {
+      const multiRowResult: QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
           { name: 'alice', age: 19 },
@@ -53,7 +53,7 @@ describe('db', () => {
 
   describe('expectRows', () => {
     test('it should get multiple rows', () => {
-      const multiRowResult: pg.QueryResult = {
+      const multiRowResult: QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
           { name: 'alice', age: 19 },

@@ -4,7 +4,7 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import uuidv4 from 'uuid/v4';
 
-import * as db from '../db';
+import * as query from '../db/user';
 import { config } from '../config';
 import { AuthenticationError, TokenVerificationError } from '../errors';
 
@@ -128,7 +128,7 @@ export class User implements Properties {
     this.refreshToken = this.createRefreshToken();
 
     if (this.isCreateable()) {
-      await db.user.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
+      await query.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
     }
   }
 
@@ -137,7 +137,7 @@ export class User implements Properties {
       throw new Error('User cannot be authenticated.');
     }
 
-    const row = await db.user.getByName(this.name);
+    const row = await query.getByName(this.name);
     const user = new User(row);
 
     const normalizedPassword = User.normalizePassword(plainPassword);
@@ -151,7 +151,7 @@ export class User implements Properties {
   }
 
   static async getByRefreshToken(id: string, refreshToken: string): Promise<User> {
-    const row = await db.user.getByRefreshToken(id, refreshToken);
+    const row = await query.getByRefreshToken(id, refreshToken);
     const user = new User(row);
 
     return user;
@@ -237,7 +237,7 @@ export class User implements Properties {
 
   updateRefreshToken() {
     if (this.isIdentifiable()) {
-      return db.user.updateRefreshToken(this.id, this.refreshToken!);
+      return query.updateRefreshToken(this.id, this.refreshToken!);
     }
   }
 }
