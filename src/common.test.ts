@@ -8,7 +8,7 @@ interface Person {
 }
 
 describe('expectKeys', () => {
-  test('it should work when the keys exist', () => {
+  test('work when all keys exist', () => {
     const personObject: any = { name: 'bob', age: 18 };
     const person: Person = common.expectKeys(personObject, 'name', 'age');
 
@@ -16,7 +16,7 @@ describe('expectKeys', () => {
     expect(person.age).toBe(18);
   });
 
-  test('it should throw when a key is missing', () => {
+  test('throw when a key is missing', () => {
     const personMissingAge: any = { name: 'bob' };
 
     expect(() => {

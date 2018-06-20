@@ -51,7 +51,7 @@ describe('db', () => {
       infoMock.mockReset();
     });
 
-    test('it should perform and log the query', async () => {
+    test('perform and log the query', async () => {
       const result = {
         rowCount: 1,
         rows: [{ name: 'bob', age: 18 }],
@@ -75,7 +75,7 @@ describe('db', () => {
   });
 
   describe('expectRow', () => {
-    test('it should get a single row', () => {
+    test('get a single row', () => {
       const singleRowResult: pg.QueryResult = {
         rows: [{ name: 'bob', age: 18 }],
         rowCount: 1,
@@ -90,7 +90,7 @@ describe('db', () => {
       expect(person.age).toBe(18);
     });
 
-    test('it should throw on more than one row', () => {
+    test('throw on more than one row', () => {
       const multiRowResult: pg.QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
@@ -110,7 +110,7 @@ describe('db', () => {
   });
 
   describe('expectRows', () => {
-    test('it should get multiple rows', () => {
+    test('get multiple rows', () => {
       const multiRowResult: pg.QueryResult = {
         rows: [
           { name: 'bob', age: 18 },
