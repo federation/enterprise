@@ -1,4 +1,3 @@
-jest.mock('argon2');
 import argon2 from 'argon2';
 
 jest.mock('../db/user');
@@ -53,20 +52,18 @@ describe('User', () => {
   });
 
   describe('create', () => {
-    argon2.hash.mockResolvedValue('hashed');
-    query.create.mockResolvedValue(undefined);
+    const password = '$argon2i$v=19$m=4096,t=3,p=1$K2B2ETSDq7GtE9QQEya+Pg$rTRVmHh/3/kEYhBSyJe76MWOje4gtiDgC3Mlz+c9HGU';
+    const spy = jest.spyOn(argon2, 'hash').mockResolvedValue(password);
 
     afterEach(() => {
-      argon2.hash.mockReset();
-      query.create.mockReset();
+      spy.mockReset();
     });
 
     test('creates Createable user', async () => {
       const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
 
       await user.create('hunter2');
-
-      expect(query.create).toHaveBeenCalledWith(user.id, user.name, user.email, 'hashed', user.refreshToken);
+      expect(query.create).toHaveBeenCalledWith(user.id, user.name, user.email, password, user.refreshToken);
     });
 
     test('creates a refresh token', async () => {
