@@ -9,11 +9,6 @@ resetConfig(new Config({ JWT_SECRET: 'hunter2' }));
 import * as db from './db';
 import * as query from './user';
 
-interface Person {
-  name: string;
-  age: number;
-}
-
 describe('db', () => {
   describe('user', () => {
     // FIXME: need to suppress logger
