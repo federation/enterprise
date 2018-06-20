@@ -86,8 +86,14 @@ export class User implements Properties {
     return Boolean(this.password) && Boolean(this.name);
   }
 
-  async create(plainPassword: string) {
+  static async hashPassword(plainPassword: string): Promise<string> {
     const argon2Hash = await argon2.hash(User.normalizePassword(plainPassword));
+
+    return argon2Hash;
+  }
+
+  async create(plainPassword: string) {
+    const argon2Hash = await User.hashPassword(plainPassword);
 
     this.refreshToken = this.createRefreshToken();
 
