@@ -92,7 +92,7 @@ export class User implements Properties {
     this.refreshToken = this.createRefreshToken();
 
     if (!this.isCreateable()) {
-      throw new Error('User is not createable!');
+      throw new Error('User is not Createable');
     }
 
     return query.create(this.id, this.name, this.email, argon2Hash, this.refreshToken);
@@ -100,7 +100,7 @@ export class User implements Properties {
 
   async authenticate(plainPassword: string): Promise<boolean> {
     if (!this.isAuthenticateable()) {
-      throw new Error('User cannot be authenticated.');
+      throw new Error('User is not Authenticateable');
     }
 
     const normalizedPassword = User.normalizePassword(plainPassword);
@@ -132,7 +132,7 @@ export class User implements Properties {
 
   createAccessToken(): string {
     if (!this.isContactable()) {
-      throw new Error("Couldn't create access token");
+      throw new Error('User is not Contactable');
     }
 
     const payload: AccessTokenPayload = {
@@ -168,7 +168,7 @@ export class User implements Properties {
 
   createRefreshToken() {
     if (!this.isContactable()) {
-      throw new Error("Couldn't create refresh token");
+      throw new Error('User is not Contactable');
     }
 
     const payload: RefreshTokenPayload = {
@@ -203,7 +203,7 @@ export class User implements Properties {
 
   updateRefreshToken() {
     if (!this.isIdentifiable()) {
-      throw new Error('User is not identifiable!');
+      throw new Error('User is not Identifiable');
     }
 
     return query.updateRefreshToken(this.id, this.refreshToken!);
