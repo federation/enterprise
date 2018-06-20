@@ -193,7 +193,7 @@ export class User implements Properties {
     return new User(user);
   }
 
-  updateRefreshToken() {
+  async updateRefreshToken(): Promise<void> {
     if (!this.isIdentifiable()) {
       throw new Error('User is not Identifiable');
     }
