@@ -142,10 +142,10 @@ export class User implements Properties {
       tokenType: 'access',
     };
 
-    const MILLISECONDS_IN_MINUTE = 60000;
+    const SECONDS_IN_MINUTE = 60;
 
     const metadata = {
-      expiresIn: MILLISECONDS_IN_MINUTE,
+      expiresIn: SECONDS_IN_MINUTE,
     };
 
     return jwt.sign(payload, config().JWT_SECRET, metadata);
@@ -178,10 +178,10 @@ export class User implements Properties {
       tokenType: 'refresh',
     };
 
-    const MILLISECONDS_IN_30_DAYS = 2592000000;
+    const SECONDS_IN_30_DAYS = 2592000;
 
     const metadata = {
-      expiresIn: MILLISECONDS_IN_30_DAYS,
+      expiresIn: SECONDS_IN_30_DAYS,
     };
 
     return jwt.sign(payload, config().JWT_SECRET, metadata);
