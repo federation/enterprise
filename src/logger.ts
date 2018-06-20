@@ -53,7 +53,7 @@ class ConsoleFormatter {
 
 let logger_: winston.Logger;
 
-export function resetLogger(logger: winston.Logger) {
+export function setLogger(logger: winston.Logger) {
   logger_ = logger;
 }
 
