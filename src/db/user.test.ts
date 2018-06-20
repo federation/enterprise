@@ -1,34 +1,69 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable import/imports-first */
-/* eslint-disable import/no-imports-first */
-
 import * as db from './db';
 import * as query from './user';
 
+// TODO: This seems to just be testing the implementation, what should be tested instead?
 describe('db', () => {
   describe('user', () => {
-    test('getByName', async () => {
-      const user = {
-        id: 'abc',
-        name: 'bob',
-        email: 'bob@loblaw.com',
-        password: 'hunter2',
-        refreshToken: 'refresh',
-      };
+    const user = {
+      id: '66811411-3496-4d77-9ae5-08022f79b35a',
+      name: 'bob',
+      email: 'bob@loblaw.com',
+      password: 'hunter2',
+      refreshToken: 'refresh',
+    };
 
+    const spy = jest.spyOn(db, 'query');
+
+    afterEach(() => {
+      spy.mockReset();
+    });
+
+    test('create', async () => {
+      // eslint-disable-next-line no-undefined
+      spy.mockResolvedValue(undefined);
+
+      await query.create(user.id, user.name, user.email, user.password, user.refreshToken);
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy.mock.calls[0][1]).toEqual([user.id, user.name, user.email, user.password, user.refreshToken]);
+    });
+
+    test('getByName', async () => {
       const queryResult = {
         rows: [user],
         rowCount: 1,
       };
-
-      const spy = jest.spyOn(db, 'query');
 
       spy.mockResolvedValue(queryResult);
 
       const result = await query.getByName('bob');
 
       expect(result).toBe(user);
-      spy.mockRestore();
+      expect(spy.mock.calls[0][1]).toEqual(['bob']);
+    });
+
+    test('getByRefreshToken', async () => {
+      const queryResult = {
+        rows: [user],
+        rowCount: 1,
+      };
+
+      spy.mockResolvedValue(queryResult);
+
+      const result = await query.getByRefreshToken(user.id, user.refreshToken);
+
+      expect(result).toBe(user);
+      expect(spy.mock.calls[0][1]).toEqual([user.id, user.refreshToken]);
+    });
+
+    test('updateRefreshToken', async () => {
+      // eslint-disable-next-line no-undefined
+      spy.mockResolvedValue(undefined);
+
+      await query.updateRefreshToken(user.id, user.refreshToken);
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy.mock.calls[0][1]).toEqual([user.refreshToken, user.id]);
     });
   });
 });
