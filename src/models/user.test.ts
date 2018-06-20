@@ -117,4 +117,97 @@ describe('User', () => {
       await expect(user.authenticate('hunter2')).rejects.toThrow();
     });
   });
+
+  describe('tokens', () => {
+    describe('access', () => {
+      test('rejects creating non-Contactable user', () => {
+        const user = new User({});
+
+        expect(user.isContactable()).toBeFalsy();
+        expect(() => user.createAccessToken()).toThrow();
+      });
+
+      test('deserializes to User', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const accessToken = user.createAccessToken();
+        const deserialized = User.fromAccessToken(accessToken);
+
+        expect(deserialized).toEqual(user);
+      });
+
+      test('rejects non-access token', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const refreshToken = user.createRefreshToken();
+
+        expect(() => User.fromAccessToken(refreshToken)).toThrow(/Not an access token/);
+      });
+
+      test('rejects expired token', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const accessToken = user.createAccessToken();
+
+        const NOW = Date.now();
+        const MILLISECONDS_IN_MINUTE = 60000;
+        const PAST_EXPIRATION = NOW + MILLISECONDS_IN_MINUTE;
+
+        const spy = jest.spyOn(Date, 'now').mockReturnValue(PAST_EXPIRATION);
+
+        expect(() => User.fromAccessToken(accessToken)).toThrow(/expired/);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+      });
+    });
+
+    describe('refresh', () => {
+      test('rejects creating for non-Contactable user', () => {
+        const user = new User({});
+
+        expect(user.isContactable()).toBeFalsy();
+        expect(() => user.createRefreshToken()).toThrow();
+      });
+
+      // TODO: create interface Refreshable and check that instead
+      test('rejects updating for non-Identifiable user', async () => {
+        const user = new User({});
+
+        delete user.id;
+
+        expect(user.isIdentifiable()).toBeFalsy();
+
+        await expect(user.updateRefreshToken()).rejects.toThrow();
+      });
+
+      test('deserializes to User', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const refreshToken = user.createRefreshToken();
+        const deserialized = User.fromRefreshToken(refreshToken);
+
+        expect(deserialized).toEqual(user);
+      });
+
+      test('rejects non-refresh token', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const accessToken = user.createAccessToken();
+
+        expect(() => User.fromRefreshToken(accessToken)).toThrow(/Not a refresh token/);
+      });
+
+      test('rejects expired token', () => {
+        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
+        const refreshToken = user.createRefreshToken();
+
+        const NOW = Date.now();
+        const MILLISECONDS_IN_MONTH = 2592000000;
+        const PAST_EXPIRATION = NOW + MILLISECONDS_IN_MONTH;
+
+        const spy = jest.spyOn(Date, 'now').mockReturnValue(PAST_EXPIRATION);
+
+        expect(() => User.fromRefreshToken(refreshToken)).toThrow(/expired/);
+        expect(spy).toHaveBeenCalled();
+
+        spy.mockRestore();
+      });
+    });
+  });
 });
