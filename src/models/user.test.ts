@@ -72,7 +72,6 @@ describe('User', () => {
       expect(user.refreshToken).not.toBeDefined();
 
       await user.create('hunter2');
-
       expect(user.refreshToken).toBeDefined();
     });
 
@@ -80,7 +79,6 @@ describe('User', () => {
       const user = new User({ name: 'bob' });
 
       expect(user.isCreateable()).toBeFalsy();
-
       await expect(user.create('hunter2')).rejects.toThrow();
     });
   });
