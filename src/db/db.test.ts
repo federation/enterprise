@@ -4,9 +4,9 @@
 
 import { QueryResult } from 'pg';
 
-import { resetConfig, Config } from '../config';
+import { setConfig, Config } from '../config';
 
-resetConfig(new Config({ JWT_SECRET: 'hunter2' }));
+setConfig(new Config({ JWT_SECRET: 'hunter2' }));
 
 import * as db from './db';
 

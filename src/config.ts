@@ -64,7 +64,7 @@ export class Config implements Options, Requirements {
 
 let config_: Config;
 
-export function resetConfig(config: Config) {
+export function setConfig(config: Config) {
   config_ = config;
 }
 
