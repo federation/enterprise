@@ -7,7 +7,7 @@ import { logger } from '../../logger';
 
 export function createResolvers(): IResolvers {
   return {
-    Query: {
+    RootQuery: {
       currentUser(_parent, _args, context, _info) {
         const koa = context.koa;
 
@@ -36,7 +36,7 @@ export function createResolvers(): IResolvers {
       },
     },
 
-    Mutation: {
+    RootMutation: {
       async register(parent, args, context, _info) {
         if (!args.name || !args.email || !args.password) {
           context.koa.response.status = HttpStatus.INTERNAL_SERVER_ERROR;

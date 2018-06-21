@@ -13,8 +13,8 @@ export function createSchema() {
   const typeDefs = fs.readFileSync(path.join(process.cwd(), 'src/graphql/schema.graphql'), 'utf8');
 
   const rootResolvers: IResolvers = {
-    Query: {},
-    Mutation: {},
+    RootQuery: {},
+    RootMutation: {},
   };
 
   const resolvers: IResolvers = _.merge(rootResolvers, User.createResolvers());
