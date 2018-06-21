@@ -4,7 +4,7 @@ import koaLogger from 'koa-logger';
 
 import { logger } from './logger';
 
-import GraphQLRoutes from './routes/graphql';
+import * as graphQL from './routes/graphql';
 
 import * as auth from './middleware/auth';
 
@@ -47,8 +47,10 @@ export function server() {
     },
   }));
 
-  app.use(GraphQLRoutes.routes());
-  app.use(GraphQLRoutes.allowedMethods());
+  const graphQLRouter = graphQL.createRouter();
+
+  app.use(graphQLRouter.routes());
+  app.use(graphQLRouter.allowedMethods());
 
   return app;
 }
