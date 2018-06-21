@@ -4,7 +4,7 @@ import Router from 'koa-router';
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
 
 import { config } from '../config';
-import { createSchema } from '../graphql/graphql';
+import { createSchema } from '../graphql';
 
 export function createRouter() {
   const router = new Router();
