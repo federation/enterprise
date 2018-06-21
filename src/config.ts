@@ -22,7 +22,7 @@ export function getDefaultOptions(): Options {
     PORT: 8080,
     HOST: '0.0.0.0',
     NODE_ENV: 'development',
-    LOG_PATH: path.join(__dirname, '../logs'),
+    LOG_PATH: path.join(process.cwd(), 'logs/'),
   };
 }
 

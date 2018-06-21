@@ -10,7 +10,7 @@ import { logger } from '../logger';
 export function createSchema() {
   // TODO: Split this up and merge it?
   // eslint-disable-next-line no-sync
-  const typeDefs = fs.readFileSync(path.join(__dirname, './schema.graphql'), 'utf8');
+  const typeDefs = fs.readFileSync(path.join(process.cwd(), 'src/graphql/schema.graphql'), 'utf8');
 
   const rootResolvers: IResolvers = {
     Query: {},
