@@ -17,21 +17,27 @@ interface Environment {
   [variable: string]: string | undefined;
 }
 
-export const DefaultOptions: Options = {
-  PORT: 8080,
-  HOST: '0.0.0.0',
-  NODE_ENV: 'development',
-  LOG_PATH: path.join(__dirname, '../logs'),
-};
+export function getDefaultOptions(): Options {
+  return {
+    PORT: 8080,
+    HOST: '0.0.0.0',
+    NODE_ENV: 'development',
+    LOG_PATH: path.join(__dirname, '../logs'),
+  };
+}
 
-const TestEnvironment: Environment = {
-  JWT_SECRET: 'jwt-secret',
-  NODE_ENV: 'test',
-};
+export function getTestEnvironment(): Environment {
+  return {
+    JWT_SECRET: 'jwt-secret',
+    NODE_ENV: 'test',
+  };
+}
 
-export const RequiredOptions = [
-  'JWT_SECRET',
-];
+export function getRequiredOptions(): Array<string> {
+  return [
+    'JWT_SECRET',
+  ];
+}
 
 export class Config implements Configuration {
   private environment: Environment;
@@ -46,16 +52,18 @@ export class Config implements Configuration {
   readonly LOG_PATH: string;
 
   constructor(environment: Environment) {
+    const defaultOptions = getDefaultOptions();
+
     this.environment = environment;
 
     // Required
     this.JWT_SECRET = this.env('JWT_SECRET');
 
     // Optional
-    this.PORT = parseInt(this.env('PORT', DefaultOptions.PORT));
-    this.HOST = this.env('HOST', DefaultOptions.HOST);
-    this.NODE_ENV = this.env('NODE_ENV', DefaultOptions.NODE_ENV);
-    this.LOG_PATH = this.env('LOG_PATH', DefaultOptions.LOG_PATH);
+    this.PORT = parseInt(this.env('PORT', defaultOptions.PORT));
+    this.HOST = this.env('HOST', defaultOptions.HOST);
+    this.NODE_ENV = this.env('NODE_ENV', defaultOptions.NODE_ENV);
+    this.LOG_PATH = this.env('LOG_PATH', defaultOptions.LOG_PATH);
   }
 
   private env(key: string, orDefault?: (() => any) | any) {
@@ -81,7 +89,7 @@ export function setConfig(config: Config) {
 
 export function config() {
   if (!config_) {
-    const env = process.env.NODE_ENV === 'test' ? TestEnvironment : process.env;
+    const env = process.env.NODE_ENV === 'test' ? getTestEnvironment() : process.env;
 
     config_ = new Config(env);
   }
