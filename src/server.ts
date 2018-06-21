@@ -6,8 +6,6 @@ import { logger } from './logger';
 
 import * as graphQL from './routes/graphql';
 
-import * as auth from './middleware/auth';
-
 // TODO: This runs before the request is actually finished. It'll consider a
 // request done as soon as reverse proxy starts receiving it? but the koa-logger
 // will consider it done until after nginx finishes responding.
@@ -38,8 +36,6 @@ export function server() {
   }));
 
   app.use(requestLogger);
-
-  app.use(auth.unauthenticatedHandler);
 
   app.use(koaBody({
     extendTypes: {
