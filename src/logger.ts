@@ -11,7 +11,7 @@ import { config } from './config';
 
 // TODO: Move this to Config?
 function logPath(log: string): string {
-  return path.join(config().LOG_PATH, log);
+  return path.join(config().WORK_DIR, 'logs/', log);
 }
 
 interface ConsoleFormatterOptions {
