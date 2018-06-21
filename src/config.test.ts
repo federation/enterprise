@@ -1,6 +1,8 @@
-import { Config, DefaultOptions } from './config';
+import { Config, getDefaultOptions } from './config';
 
 describe('Config', () => {
+  const DefaultOptions = getDefaultOptions();
+
   const RequiredOptions = {
     JWT_SECRET: 'hunter2',
   };
