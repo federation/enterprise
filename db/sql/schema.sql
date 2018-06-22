@@ -127,10 +127,10 @@ CREATE TYPE enterprise.opportunity_result AS ENUM (
   -- The submission was not followed up.
   'ignored',
 
-  -- The applicant concluded it.
-  'deferred',
+  -- The applicant withdrew.
+  'withdrew',
 
-  -- The target concluded it.
+  -- The employer concluded it.
   'rejected',
 
   -- An offer was extended.
