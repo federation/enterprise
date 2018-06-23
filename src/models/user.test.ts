@@ -34,6 +34,14 @@ describe('User', () => {
       expect(unnameable.isNameable()).toBeFalsy();
     });
 
+    test('can be Authenticateable', () => {
+      const authenticateable = new User({ name: 'bob', password: 'hunter2' });
+      const notAuthenticateable = new User();
+
+      expect(authenticateable.isAuthenticateable()).toBeTruthy();
+      expect(notAuthenticateable.isAuthenticateable()).toBeFalsy();
+    });
+
     test('can be Refreshable', () => {
       const refreshable = new User({ refreshToken: 'refr3sh' });
       const unrefreshable = new User();
@@ -56,14 +64,6 @@ describe('User', () => {
 
       expect(createable.isCreateable()).toBeTruthy();
       expect(notCreateable.isCreateable()).toBeFalsy();
-    });
-
-    test('can be Authenticateable', () => {
-      const authenticateable = new User({ name: 'bob', password: 'hunter2' });
-      const notAuthenticateable = new User();
-
-      expect(authenticateable.isAuthenticateable()).toBeTruthy();
-      expect(notAuthenticateable.isAuthenticateable()).toBeFalsy();
     });
   });
 
