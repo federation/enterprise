@@ -10,6 +10,7 @@ describe('db', () => {
       email: 'bob@loblaw.com',
       password: 'hunter2',
       refreshToken: 'refresh',
+      createdAt: 'Sat Jun 23 2018 00:03:44 GMT+0000 (UTC)',
     };
 
     const spy = jest.spyOn(db, 'query');
