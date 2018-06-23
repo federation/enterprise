@@ -32,8 +32,11 @@ export function createRouter() {
   router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
 
   if (config().NODE_ENV === 'development') {
+    // TODO: Is there a better way to handle this? Automatically discoverable?
+    const prefix = process.env.IS_SERVICE ? '/api' : '';
+
     router.get('/graphiql', graphiqlKoa({
-      endpointURL: '/api/graphql',
+      endpointURL: prefix + '/graphql',
       // passHeader: `'Authorization': 'Bearer lorem ipsum'`
     }));
   }

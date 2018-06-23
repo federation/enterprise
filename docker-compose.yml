@@ -6,6 +6,8 @@ services:
       target: builder
     image: fedtech/enterprise:dev
     command: ["yarn", "run", "start:live"]
+    environment:
+      - IS_SERVICE=1
     env_file:
       - ./.env
     volumes:
