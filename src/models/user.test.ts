@@ -26,6 +26,14 @@ describe('User', () => {
       expect(unidentifiable.isIdentifiable()).toBeFalsy();
     });
 
+    test('can be Nameable', () => {
+      const nameable = new User({ name: 'bob' });
+      const unnameable = new User();
+
+      expect(nameable.isNameable()).toBeTruthy();
+      expect(unnameable.isNameable()).toBeFalsy();
+    });
+
     test('can be Contactable', () => {
       const contactable = new User({ name: 'bob', email: 'bob@loblaw.com' });
       const notContactable = new User();
