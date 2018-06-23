@@ -34,6 +34,14 @@ describe('User', () => {
       expect(unnameable.isNameable()).toBeFalsy();
     });
 
+    test('can be Refreshable', () => {
+      const refreshable = new User({ refreshToken: 'refr3sh' });
+      const unrefreshable = new User();
+
+      expect(refreshable.isRefreshable()).toBeTruthy();
+      expect(unrefreshable.isRefreshable()).toBeFalsy();
+    });
+
     test('can be Contactable', () => {
       const contactable = new User({ name: 'bob', email: 'bob@loblaw.com' });
       const notContactable = new User();
