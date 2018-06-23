@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import HttpStatus from 'http-status';
 import { IResolvers } from 'graphql-tools';
 
@@ -5,9 +8,14 @@ import { TokenVerificationError } from '../../errors';
 import { User } from '../../models/user';
 import { logger } from '../../logger';
 
+export function readTypeDefs() {
+  // eslint-disable-next-line no-sync
+  return fs.readFileSync(path.join(process.cwd(), 'src/graphql/resolvers/user.graphql'), 'utf8');
+}
+
 export function createResolvers(): IResolvers {
   return {
-    RootQuery: {
+    Query: {
       currentUser(_parent, _args, context, _info) {
         const koa = context.koa;
 
@@ -36,7 +44,7 @@ export function createResolvers(): IResolvers {
       },
     },
 
-    RootMutation: {
+    Mutation: {
       async register(parent, args, context, _info) {
         if (!args.name || !args.email || !args.password) {
           context.koa.response.status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -73,12 +81,7 @@ export function createResolvers(): IResolvers {
           return;
         }
 
-        // TODO: Perform other necessary validation.
-
-        logger().info('args:', args);
-
-        // const user = await User.authenticate(args.name, args.password);
-        const user = new User({ name: args.name });
+        const user = await User.getByName(args.name);
         const isAuthenticated = await user.authenticate(args.password);
 
         if (!isAuthenticated) {

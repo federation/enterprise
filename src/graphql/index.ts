@@ -13,14 +13,14 @@ export function createSchema() {
   const typeDefs = fs.readFileSync(path.join(process.cwd(), 'src/graphql/schema.graphql'), 'utf8');
 
   const rootResolvers: IResolvers = {
-    RootQuery: {},
-    RootMutation: {},
+    Query: {},
+    Mutation: {},
   };
 
   const resolvers: IResolvers = _.merge(rootResolvers, User.createResolvers());
 
   return makeExecutableSchema({
-    typeDefs,
+    typeDefs: [typeDefs, User.readTypeDefs()],
     resolvers,
     logger: {
       log(e: any) {

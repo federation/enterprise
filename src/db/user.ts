@@ -17,13 +17,13 @@ export async function create(
 
 export async function getByName(name: string): Promise<Properties> {
   const result = await db.query(
-    'SELECT account_id AS id, name, email, password, refresh_token as "refreshToken" \
+    'SELECT account_id AS id, name, email, password, refresh_token as "refreshToken", created_at as "createdAt" \
      FROM enterprise.account \
      WHERE name = $1',
     [name]
   );
 
-  return db.expectRow(result, 'id', 'name', 'email', 'password', 'refreshToken');
+  return db.expectRow(result, 'id', 'name', 'email', 'password', 'refreshToken', 'createdAt');
 }
 
 // TODO: make refresh_token unique?

@@ -33,21 +33,23 @@ export interface Properties {
   createdAt?: Date;
 }
 
-interface Authenticateable {
-  name: string;
-  password: string;
-}
-
 interface Identifiable {
   id: string;
+}
+
+interface Nameable {
+  name: string;
+}
+
+interface Authenticateable extends Nameable {
+  password: string;
 }
 
 interface Refreshable extends Identifiable {
   refreshToken: string;
 }
 
-interface Contactable extends Identifiable {
-  name: string;
+interface Contactable extends Identifiable, Nameable {
   email: string;
 }
 
@@ -76,12 +78,16 @@ export class User implements Properties {
     return Boolean(this.id);
   }
 
+  isNameable(): this is Nameable {
+    return Boolean(this.name);
+  }
+
   isRefreshable(): this is Refreshable {
     return this.isIdentifiable() && Boolean(this.refreshToken);
   }
 
   isContactable(): this is Contactable {
-    return this.isIdentifiable() && Boolean(this.name) && Boolean(this.email);
+    return this.isIdentifiable() && this.isNameable() && Boolean(this.email);
   }
 
   isCreateable(): this is Createable {
@@ -89,7 +95,7 @@ export class User implements Properties {
   }
 
   isAuthenticateable(): this is Authenticateable {
-    return Boolean(this.password) && Boolean(this.name);
+    return this.isNameable() && Boolean(this.password);
   }
 
   static async hashPassword(plainPassword: string): Promise<string> {

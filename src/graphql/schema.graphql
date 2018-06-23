@@ -1,52 +1,6 @@
-"A user."
-type User {
-  "Unique identifier for the user."
-  id: ID!
+type Query
 
-  "The creation date."
-  createdAt: String!
-
-  "The user's name."
-  name: String!
-
-  "The user's email address."
-  email: String!
-}
-
-"Information about an authenticated user."
-type Authentication {
-  "Short-lived authentication JWT."
-  accessToken: String!
-
-  "Long-lived refresh JWT."
-  refreshToken: String!
-
-  "The authenticated user."
-  user: User!
-}
-
-type Query {
-  """
-  Get the currently authenticated user.
-
-  The user is expected to be authenticated.
-  """
-  currentUser: User
-}
-
-type Mutation {
-  "Register a new user."
-  register(name: String!, email: String!, password: String!): Authentication
-
-  "Authenticate an existing user."
-  login(name: String!, password: String!): Authentication
-
-  "Obtain a refreshed access token."
-  refreshAccessToken(
-    "The user's long-lived refresh token."
-    refreshToken: String!
-  ): Authentication
-}
+type Mutation
 
 schema {
   query: Query
