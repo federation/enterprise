@@ -8,6 +8,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE SCHEMA enterprise;
 
+CREATE FUNCTION to_iso8601(ts timestamp with time zone) RETURNS text AS $$
+  SELECT to_char(ts at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"');
+$$ LANGUAGE SQL IMMUTABLE STRICT PARALLEL SAFE;
+
 -- A user account.
 CREATE TABLE enterprise.account (
   account_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
