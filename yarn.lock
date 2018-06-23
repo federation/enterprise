@@ -174,8 +174,8 @@
     "@types/koa" "*"
 
 "@types/koa-router@^7.0.28":
-  version "7.0.29"
-  resolved "https://registry.yarnpkg.com/@types/koa-router/-/koa-router-7.0.29.tgz#efdd3c39297944e8a55764f7909abcfd9bf51ca6"
+  version "7.0.30"
+  resolved "https://registry.yarnpkg.com/@types/koa-router/-/koa-router-7.0.30.tgz#636f399bff7c43f83c016b971b028c3f6316ea26"
   dependencies:
     "@types/koa" "*"
 
@@ -218,8 +218,8 @@
     "@types/node" "*"
 
 "@types/node@*", "@types/node@^10.3.0":
-  version "10.3.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.4.tgz#c74e8aec19e555df44609b8057311052a2c84d9e"
+  version "10.3.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.5.tgz#8423cdf6e6fb83433e489900d7600d3b61c8260c"
 
 "@types/node@^8.9.4":
   version "8.10.20"
@@ -445,6 +445,10 @@ apollo-server-env@^2.0.0-rc.0:
   resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-2.0.0-rc.0.tgz#aef3427cb8077694e8605ce4575c917247215b87"
   dependencies:
     node-fetch "^2.1.2"
+
+apollo-server-errors@^2.0.0-rc.2:
+  version "2.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.0.0-rc.2.tgz#168ef5f81e164505e71ff3119094a0b3b815e8aa"
 
 apollo-server-koa@^2.0.0-beta.9:
   version "2.0.0-beta.9"
@@ -5003,9 +5007,9 @@ ts-jest@^22.4.6:
     source-map-support "^0.5.5"
     yargs "^11.0.0"
 
-ts-node@^6.0.5:
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-6.1.2.tgz#3221ca727a84bc66db1de8b647896621e38e8eaf"
+ts-node@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-7.0.0.tgz#a94a13c75e5e1aa6b82814b84c68deb339ba7bff"
   dependencies:
     arrify "^1.0.0"
     buffer-from "^1.1.0"

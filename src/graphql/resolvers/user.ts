@@ -3,6 +3,7 @@ import path from 'path';
 
 import HttpStatus from 'http-status';
 import { IResolvers } from 'graphql-tools';
+import { AuthenticationError } from 'apollo-server-errors';
 
 import { TokenVerificationError } from '../../errors';
 import { User } from '../../models/user';
@@ -74,21 +75,17 @@ export function createResolvers(): IResolvers {
         };
       },
 
-      async login(parent, args, context, _info) {
+      async login(parent, args, _context, _info) {
         if (!args.name || !args.password) {
-          context.koa.response.status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-          return;
+          throw new AuthenticationError('Missing username or password');
         }
 
         const user = await User.getByName(args.name);
         const isAuthenticated = await user.authenticate(args.password);
 
         if (!isAuthenticated) {
-          throw new Error('Could not authenticate user');
+          throw new AuthenticationError('Could not authenticate user');
         }
-
-        logger().info('authenticated user:', user);
 
         const accessToken = user.createAccessToken();
 
