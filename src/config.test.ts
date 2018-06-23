@@ -30,4 +30,25 @@ describe('Config', () => {
       const config = new Config(envWithoutRequiredVariables);
     }).toThrow();
   });
+
+  test('isDevelopment', () => {
+    const developmentEnv = { NODE_ENV: 'development', ...RequiredOptions };
+    const config = new Config(developmentEnv);
+
+    expect(config.isDevelopment()).toBeTruthy();
+  });
+
+  test('isProduction', () => {
+    const productionEnv = { NODE_ENV: 'production', ...RequiredOptions };
+    const config = new Config(productionEnv);
+
+    expect(config.isProduction()).toBeTruthy();
+  });
+
+  test('isTest', () => {
+    const testEnv = { NODE_ENV: 'test', ...RequiredOptions };
+    const config = new Config(testEnv);
+
+    expect(config.isTest()).toBeTruthy();
+  });
 });

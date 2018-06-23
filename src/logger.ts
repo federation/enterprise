@@ -66,7 +66,7 @@ export function setLogger(logger: winston.Logger) {
 
 export function logger(): winston.Logger {
   if (!logger_) {
-    if (config().NODE_ENV === 'test') {
+    if (config().isTest()) {
       logger_ = winston.createLogger({
         silent: true,
         transports: [new NullTransport()],
@@ -90,7 +90,7 @@ export function logger(): winston.Logger {
       ],
     });
 
-    if (config().NODE_ENV === 'development') {
+    if (config().isDevelopment()) {
       logger_.add(new winston.transports.Console({
         handleExceptions: true,
         format: format.combine(

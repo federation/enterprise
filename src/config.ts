@@ -79,6 +79,18 @@ export class Config implements Configuration {
       return this.environment[key] || orDefault;
     }
   }
+
+  isDevelopment() {
+    return this.NODE_ENV === 'development';
+  }
+
+  isProduction() {
+    return this.NODE_ENV === 'production';
+  }
+
+  isTest() {
+    return this.NODE_ENV === 'test';
+  }
 }
 
 let config_: Config;
