@@ -14,7 +14,7 @@
     "docs": "typedoc --out docs/ src/",
     "lint": "eslint --ext .ts src/",
     "tslint": "tslint -c ./tslint.json --project .",
-    "start:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts"
+    "start:live": "nodemon --exec ./node_modules/.bin/ts-node --files -- ./src/index.ts"
   },
   "dependencies": {
     "apollo-server-errors": "^2.0.0-rc.2",
