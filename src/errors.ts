@@ -6,10 +6,10 @@ export class AuthenticationError extends Error {
   }
 }
 
-export class TokenVerificationError extends Error {
+export class TokenTypeError extends Error {
   constructor(m: string) {
     super(m);
 
-    Object.setPrototypeOf(this, TokenVerificationError.prototype);
+    Object.setPrototypeOf(this, TokenTypeError.prototype);
   }
 }

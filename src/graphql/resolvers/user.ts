@@ -1,72 +1,61 @@
 import fs from 'fs';
 import path from 'path';
 
-import HttpStatus from 'http-status';
+import _ from 'lodash';
 import { IResolvers } from 'graphql-tools';
-import { AuthenticationError } from 'apollo-server-errors';
+import { AuthenticationError, UserInputError } from 'apollo-server-errors';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { TokenVerificationError } from '../../errors';
 import { User } from '../../models/user';
 import { logger } from '../../logger';
+import { TokenTypeError } from '../../errors';
 
 export function readTypeDefs() {
   // eslint-disable-next-line no-sync
   return fs.readFileSync(path.join(process.cwd(), 'src/graphql/resolvers/user.graphql'), 'utf8');
 }
 
+function authenticate(parent: any, args: any, context: any, _info: any) {
+  const koa = context.koa;
+
+  if (!koa) {
+    throw new Error('Missing Koa context');
+  }
+
+  // eslint-disable-next-line dot-notation
+  const tokenHeader = koa.request.headers['authorization'];
+
+  if (!tokenHeader) {
+    throw new Error('Missing authorization header');
+  }
+
+  const token = tokenHeader.replace('Bearer ', '');
+
+  context.user = User.fromAccessToken(token);
+}
+
 export function createResolvers(): IResolvers {
   return {
     Query: {
-      currentUser(_parent, _args, context, _info) {
-        const koa = context.koa;
+      currentUser(parent, args, context, info) {
+        authenticate(parent, args, context, info);
 
-        // eslint-disable-next-line dot-notation
-        const tokenHeader = koa.request.headers['authorization'];
-
-        if (!tokenHeader) {
-          throw new Error('Not authenticated');
-        }
-
-        const token = tokenHeader.replace('Bearer ', '');
-
-        try {
-          koa.state.user = User.fromAccessToken(token);
-
-          return koa.state.user;
-        } catch (e) {
-          // TODO: Ensure this terminates and prevents further middleware from executing.
-          if (e instanceof TokenVerificationError) {
-            koa.response.status = HttpStatus.INTERNAL_SERVER_ERROR;
-            koa.response.redirect('/login');
-          } else {
-            throw e;
-          }
-        }
+        return context.user;
       },
     },
 
     Mutation: {
-      async register(parent, args, context, _info) {
+      async register(parent, args, _context, _info) {
         if (!args.name || !args.email || !args.password) {
-          context.koa.response.status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-          return;
+          throw new UserInputError('Missing registration arguments', {
+            missingArguments: _.difference(['name', 'email', 'password'], Object.keys(args)),
+          });
         }
 
-        // TODO: Perform other necessary validation.
-
-        logger().info('args:', args);
-
-        // TODO: catch
         const user = new User({ name: args.name, email: args.email });
-
-        await user.create(args.password);
-
-        logger().info('created user:', user);
-
         const accessToken = user.createAccessToken();
 
-        logger().info('created access token:', accessToken);
+        await user.create(args.password);
 
         return {
           accessToken,
@@ -96,9 +85,29 @@ export function createResolvers(): IResolvers {
         };
       },
 
-      // refreshAccessToken(parent, args, context, info) {},
+      async createAccessToken(_parent, args, _context, _info) {
+        if (!args.refreshToken) {
+          throw new UserInputError('Missing refresh token');
+        }
 
-      // createEmployer(parent, args, context, info) {}
+        try {
+          const user = User.fromRefreshToken(args.refreshToken);
+
+          return user.createAccessToken();
+        } catch (e) {
+          logger().error('Failed to refresh an access token', e);
+
+          if (e instanceof TokenTypeError) {
+            throw e;
+          } else if (e instanceof TokenExpiredError) {
+            throw new Error(`Token expired at ${e.expiredAt}. Please re-authenticate`);
+          } else if (e instanceof JsonWebTokenError) {
+            throw new Error('Error validating token');
+          } else {
+            throw e;
+          }
+        }
+      },
     },
 
     User: {},

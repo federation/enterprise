@@ -6,7 +6,7 @@ import uuidv4 from 'uuid/v4';
 
 import * as query from '../db/user';
 import { config } from '../config';
-import { AuthenticationError, TokenVerificationError } from '../errors';
+import { AuthenticationError, TokenTypeError } from '../errors';
 
 interface TokenPayload {
   readonly id: string;
@@ -174,7 +174,7 @@ export class User implements Properties {
     const user = jwt.verify(token, config().JWT_SECRET) as AccessTokenPayload;
 
     if (user.tokenType !== 'access') {
-      throw new TokenVerificationError('Not an access token');
+      throw new TokenTypeError('Not an access token');
     }
 
     return new User(user);
@@ -205,7 +205,7 @@ export class User implements Properties {
     const user = jwt.verify(token, config().JWT_SECRET) as RefreshTokenPayload;
 
     if (user.tokenType !== 'refresh') {
-      throw new TokenVerificationError('Not a refresh token');
+      throw new TokenTypeError('Not a refresh token');
     }
 
     return new User(user);

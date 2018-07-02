@@ -41,10 +41,11 @@ extend type Mutation {
   "Authenticate an existing user."
   login(name: String!, password: String!): Authentication
 
-  "Obtain a refreshed access token."
-  refreshAccessToken(
-    "The user's long-lived refresh token."
-    refreshToken: String!
-  ): Authentication
+  """
+  Obtain a new access token.
+
+  This is contingent upon the refresh token being valid and not expired.
+  """
+  createAccessToken(refreshToken: String!): String
 }
 
