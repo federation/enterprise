@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import koaBody from 'koa-bodyparser';
 import koaLogger from 'koa-logger';
+import { ServerRegistration } from 'apollo-server-koa';
 
 import { logger } from './logger';
 
@@ -43,10 +44,10 @@ export function server() {
     },
   }));
 
-  const graphQLRouter = graphQL.createRouter();
+  const apollo = graphQL.createServer();
+  const serverRegistration = { app } as ServerRegistration;
 
-  app.use(graphQLRouter.routes());
-  app.use(graphQLRouter.allowedMethods());
+  apollo.applyMiddleware(serverRegistration);
 
   return app;
 }

@@ -2,30 +2,27 @@ import fs from 'fs';
 import path from 'path';
 
 import _ from 'lodash';
-import { IResolvers, makeExecutableSchema } from 'graphql-tools';
+import { IResolvers } from 'graphql-tools';
+import { DocumentNode } from 'graphql';
+import { gql } from 'apollo-server-koa';
 
 import * as User from './resolvers/user';
-import { logger } from '../logger';
 
-export function createSchema() {
-  // TODO: Split this up and merge it?
+export function getTypeDefs(): Array<DocumentNode> {
   // eslint-disable-next-line no-sync
   const typeDefs = fs.readFileSync(path.join(process.cwd(), 'src/graphql/schema.graphql'), 'utf8');
+  const parsed = gql(typeDefs);
 
+  return [parsed, User.getTypeDefs()];
+}
+
+export function getResolvers() {
   const rootResolvers: IResolvers = {
     Query: {},
     Mutation: {},
   };
 
-  const resolvers: IResolvers = _.merge(rootResolvers, User.createResolvers());
+  const resolvers: IResolvers = _.merge(rootResolvers, User.getResolvers());
 
-  return makeExecutableSchema({
-    typeDefs: [typeDefs, User.readTypeDefs()],
-    resolvers,
-    logger: {
-      log(e: any) {
-        logger().error(e);
-      },
-    },
-  });
+  return resolvers;
 }

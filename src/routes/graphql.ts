@@ -1,45 +1,27 @@
 import Koa from 'koa';
-import Router from 'koa-router';
 
-import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
+import { ApolloServer } from 'apollo-server-koa';
 
 import { config } from '../config';
-import { createSchema } from '../graphql';
+import { getTypeDefs, getResolvers } from '../graphql';
 
-export function createRouter() {
-  const router = new Router();
-
-  const schema = createSchema();
-
-  function graphQLOptions(ctx: Koa.Context) {
-    return {
-      schema,
-      context: {
+export function createServer() {
+  const server = new ApolloServer({
+    typeDefs: getTypeDefs(),
+    resolvers: getResolvers(),
+    debug: config().isDevelopment(),
+    mocks: config().isDevelopment(),
+    introspection: config().isDevelopment(),
+    subscriptions: false,
+    playground: {
+      endpoint: '/api/graphql',
+    },
+    context(ctx: Koa.Context) {
+      return {
         koa: ctx,
-      },
-    };
-  }
+      };
+    },
+  });
 
-  function graphQLTextParser(ctx: Koa.Context, next: Function) {
-    if (ctx.request.is('application/graphql')) {
-      ctx.body = { query: ctx.request.body };
-    }
-
-    return next();
-  }
-
-  router.get('/graphql', graphqlKoa(graphQLOptions));
-  router.post('/graphql', graphQLTextParser, graphqlKoa(graphQLOptions));
-
-  if (config().isDevelopment()) {
-    // TODO: Is there a better way to handle this? Automatically discoverable?
-    const prefix = process.env.IS_SERVICE ? '/api' : '';
-
-    router.get('/graphiql', graphiqlKoa({
-      endpointURL: prefix + '/graphql',
-      // passHeader: `'Authorization': 'Bearer lorem ipsum'`
-    }));
-  }
-
-  return router;
+  return server;
 }

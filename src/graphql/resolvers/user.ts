@@ -3,16 +3,20 @@ import path from 'path';
 
 import _ from 'lodash';
 import { IResolvers } from 'graphql-tools';
-import { AuthenticationError, UserInputError } from 'apollo-server-errors';
+import { gql, AuthenticationError, UserInputError } from 'apollo-server-koa';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { User } from '../../models/user';
 import { logger } from '../../logger';
 import { TokenTypeError } from '../../errors';
 
-export function readTypeDefs() {
+export function getTypeDefs() {
+  const graphQLPath = path.join(process.cwd(), 'src/graphql/resolvers/user.graphql');
   // eslint-disable-next-line no-sync
-  return fs.readFileSync(path.join(process.cwd(), 'src/graphql/resolvers/user.graphql'), 'utf8');
+  const contents = fs.readFileSync(graphQLPath, 'utf8');
+  const typeDefs = gql(contents);
+
+  return typeDefs;
 }
 
 function authenticate(parent: any, args: any, context: any, _info: any) {
@@ -34,7 +38,7 @@ function authenticate(parent: any, args: any, context: any, _info: any) {
   context.user = User.fromAccessToken(token);
 }
 
-export function createResolvers(): IResolvers {
+export function getResolvers(): IResolvers {
   return {
     Query: {
       currentUser(parent, args, context, info) {
