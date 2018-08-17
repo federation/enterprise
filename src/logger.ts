@@ -94,7 +94,8 @@ export function logger(): winston.Logger {
       logger_.add(new winston.transports.Console({
         handleExceptions: true,
         format: format.combine(
-          format.colorize(),
+          // FIXME: logform 1.9.1 causes this to throw
+          // format.colorize(),
           format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
           new ConsoleFormatter(),
         ),

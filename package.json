@@ -31,7 +31,7 @@
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "lodash": "^4.17.10",
-    "logform": "^1.9.0",
+    "logform": "^1.9.1",
     "pg": "^7.4.3",
     "uuid": "^3.3.2",
     "winston": "^3.0.0",
