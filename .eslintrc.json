@@ -181,8 +181,8 @@
         "jest": true
       },
       "rules": {
-        "import/imports-first": ["allow"],
-        "max-nested-callbacks": ["allow"]
+        "import/imports-first": [0],
+        "max-nested-callbacks": [0]
       }
     }
   ]
