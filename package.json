@@ -17,7 +17,7 @@
     "start:live": "nodemon --exec ./node_modules/.bin/ts-node --files -- ./src/index.ts"
   },
   "dependencies": {
-    "apollo-server-koa": "^2.0.3",
+    "apollo-server-koa": "^2.0.4",
     "argon2": "^0.19.3",
     "dotenv": "^6.0.0",
     "graphql": "^0.13.2",
