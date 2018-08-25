@@ -42,24 +42,8 @@ describe('User', () => {
       expect(notAuthenticateable.isAuthenticateable()).toBeFalsy();
     });
 
-    test('can be Refreshable', () => {
-      const refreshable = new User({ refreshToken: 'refr3sh' });
-      const unrefreshable = new User();
-
-      expect(refreshable.isRefreshable()).toBeTruthy();
-      expect(unrefreshable.isRefreshable()).toBeFalsy();
-    });
-
-    test('can be Contactable', () => {
-      const contactable = new User({ name: 'bob', email: 'bob@loblaw.com' });
-      const notContactable = new User();
-
-      expect(contactable.isContactable()).toBeTruthy();
-      expect(notContactable.isContactable()).toBeFalsy();
-    });
-
     test('can be Createable', () => {
-      const createable = new User({ name: 'bob', email: 'bob@loblaw.com', refreshToken: 'refresh' });
+      const createable = new User({ name: 'bob', email: 'bob@loblaw.com' });
       const notCreateable = new User();
 
       expect(createable.isCreateable()).toBeTruthy();
@@ -79,23 +63,7 @@ describe('User', () => {
       const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
 
       await user.create('hunter2');
-      expect(query.create).toHaveBeenCalledWith(user.id, user.name, user.email, password, user.refreshToken);
-    });
-
-    test('creates a refresh token', async () => {
-      const user = new User({ name: 'bob', email: 'bob@loblaw.com' });
-
-      expect(user.refreshToken).not.toBeDefined();
-
-      await user.create('hunter2');
-      expect(user.refreshToken).toBeDefined();
-    });
-
-    test("rejects user for which it can't create a refresh token", async () => {
-      const user = new User({ name: 'bob' });
-
-      expect(user.isCreateable()).toBeFalsy();
-      await expect(user.create('hunter2')).rejects.toThrow();
+      expect(query.create).toHaveBeenCalledWith(user.id, user.name, user.email, password);
     });
   });
 
@@ -123,96 +91,6 @@ describe('User', () => {
 
       expect(user.isAuthenticateable()).toBeFalsy();
       await expect(user.authenticate('hunter2')).rejects.toThrow();
-    });
-  });
-
-  describe('tokens', () => {
-    describe('access', () => {
-      test('rejects creating non-Contactable user', () => {
-        const user = new User();
-
-        expect(user.isContactable()).toBeFalsy();
-        expect(() => user.createAccessToken()).toThrow();
-      });
-
-      test('deserializes to User', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const accessToken = user.createAccessToken();
-        const deserialized = User.fromAccessToken(accessToken);
-
-        expect(deserialized).toEqual(user);
-      });
-
-      test('rejects non-access token', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const refreshToken = user.createRefreshToken();
-
-        expect(() => User.fromAccessToken(refreshToken)).toThrow(/Not an access token/);
-      });
-
-      test('rejects expired token', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const accessToken = user.createAccessToken();
-
-        const NOW = Date.now();
-        const MILLISECONDS_IN_MINUTE = 60000;
-        const PAST_EXPIRATION = NOW + MILLISECONDS_IN_MINUTE;
-
-        const spy = jest.spyOn(Date, 'now').mockReturnValue(PAST_EXPIRATION);
-
-        expect(() => User.fromAccessToken(accessToken)).toThrow(/expired/);
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
-      });
-    });
-
-    describe('refresh', () => {
-      test('rejects creating for non-Contactable user', () => {
-        const user = new User();
-
-        expect(user.isContactable()).toBeFalsy();
-        expect(() => user.createRefreshToken()).toThrow();
-      });
-
-      test('rejects updating for non-Identifiable user', async () => {
-        const user = new User();
-
-        expect(user.isRefreshable()).toBeFalsy();
-
-        await expect(user.updateRefreshToken()).rejects.toThrow();
-      });
-
-      test('deserializes to User', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const refreshToken = user.createRefreshToken();
-        const deserialized = User.fromRefreshToken(refreshToken);
-
-        expect(deserialized).toEqual(user);
-      });
-
-      test('rejects non-refresh token', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const accessToken = user.createAccessToken();
-
-        expect(() => User.fromRefreshToken(accessToken)).toThrow(/Not a refresh token/);
-      });
-
-      test('rejects expired token', () => {
-        const user = new User({ id: '123', name: 'bob', email: 'bob@loblaw.com' });
-        const refreshToken = user.createRefreshToken();
-
-        const NOW = Date.now();
-        const MILLISECONDS_IN_MONTH = 2592000000;
-        const PAST_EXPIRATION = NOW + MILLISECONDS_IN_MONTH;
-
-        const spy = jest.spyOn(Date, 'now').mockReturnValue(PAST_EXPIRATION);
-
-        expect(() => User.fromRefreshToken(refreshToken)).toThrow(/expired/);
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
-      });
     });
   });
 });

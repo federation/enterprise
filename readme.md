@@ -4,9 +4,9 @@
 
 Required environment variables:
 
-| Name         | Value      |
-|:-------------|:-----------|
-| `JWT_SECRET` | JWT secret |
+| Name            | Value         |
+|:----------------|:--------------|
+| `COOKIE_SECRET` | cookie secret |
 
 ## Development
 

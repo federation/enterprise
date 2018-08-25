@@ -9,7 +9,6 @@ describe('db', () => {
       name: 'bob',
       email: 'bob@loblaw.com',
       password: 'hunter2',
-      refreshToken: 'refresh',
       createdAt: 'Sat Jun 23 2018 00:03:44 GMT+0000 (UTC)',
     };
 
@@ -27,9 +26,9 @@ describe('db', () => {
       // eslint-disable-next-line no-undefined
       spy.mockResolvedValue(undefined);
 
-      await query.create(user.id, user.name, user.email, user.password, user.refreshToken);
+      await query.create(user.id, user.name, user.email, user.password);
 
-      expect(queryParams(spy)).toEqual([user.id, user.name, user.email, user.password, user.refreshToken]);
+      expect(queryParams(spy)).toEqual([user.id, user.name, user.email, user.password]);
     });
 
     test('getByName', async () => {
@@ -45,30 +44,6 @@ describe('db', () => {
       expect(result).toBe(user);
 
       expect(queryParams(spy)).toEqual(['bob']);
-    });
-
-    test('getByRefreshToken', async () => {
-      const queryResult = {
-        rows: [user],
-        rowCount: 1,
-      };
-
-      spy.mockResolvedValue(queryResult);
-
-      const result = await query.getByRefreshToken(user.id, user.refreshToken);
-
-      expect(result).toBe(user);
-
-      expect(queryParams(spy)).toEqual([user.id, user.refreshToken]);
-    });
-
-    test('updateRefreshToken', async () => {
-      // eslint-disable-next-line no-undefined
-      spy.mockResolvedValue(undefined);
-
-      await query.updateRefreshToken(user.id, user.refreshToken);
-
-      expect(queryParams(spy)).toEqual([user.refreshToken, user.id]);
     });
   });
 });

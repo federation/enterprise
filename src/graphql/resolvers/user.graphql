@@ -13,18 +13,6 @@ type User {
   email: String!
 }
 
-"Information about an authenticated user."
-type Authentication {
-  "Short-lived authentication JWT."
-  accessToken: String!
-
-  "Long-lived refresh JWT."
-  refreshToken: String!
-
-  "The authenticated user."
-  user: User!
-}
-
 extend type Query {
   """
   Get the currently authenticated user.
@@ -36,16 +24,12 @@ extend type Query {
 
 extend type Mutation {
   "Register a new user."
-  register(name: String!, email: String!, password: String!): Authentication
+  register(name: String!, email: String!, password: String!): User
 
-  "Authenticate an existing user."
-  login(name: String!, password: String!): Authentication
+  "Create a user session."
+  login(name: String!, password: String!): User
 
-  """
-  Obtain a new access token.
-
-  This is contingent upon the refresh token being valid and not expired.
-  """
-  createAccessToken(refreshToken: String!): String
+  "Destroy a user session."
+  logout: Boolean
 }
 

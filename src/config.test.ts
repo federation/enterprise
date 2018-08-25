@@ -4,7 +4,7 @@ describe('Config', () => {
   const DefaultOptions = getDefaultOptions();
 
   const RequiredOptions = {
-    JWT_SECRET: 'hunter2',
+    COOKIE_SECRET: 'hunter2',
   };
 
   test('uses default values', () => {

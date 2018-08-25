@@ -1,5 +1,3 @@
-import Koa from 'koa';
-
 import { ApolloServer } from 'apollo-server-koa';
 
 import { config } from '../config';
@@ -10,15 +8,18 @@ export function createServer() {
     typeDefs: getTypeDefs(),
     resolvers: getResolvers(),
     debug: config().isDevelopment(),
-    mocks: config().isDevelopment(),
     introspection: config().isDevelopment(),
     subscriptions: false,
     playground: {
       endpoint: '/api/graphql',
+      settings: {
+        'editor.theme': 'dark',
+        'editor.cursorShape': 'line',
+      } as any,
     },
-    context(ctx: Koa.Context) {
+    context(context: any) {
       return {
-        koa: ctx,
+        koa: context.ctx,
       };
     },
   });

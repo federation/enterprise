@@ -4,11 +4,8 @@ import path from 'path';
 import _ from 'lodash';
 import { IResolvers } from 'graphql-tools';
 import { gql, AuthenticationError, UserInputError } from 'apollo-server-koa';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-
 import { User } from '../../models/user';
 import { logger } from '../../logger';
-import { TokenTypeError } from '../../errors';
 
 export function getTypeDefs() {
   const graphQLPath = path.join(process.cwd(), 'src/graphql/resolvers/user.graphql');
@@ -19,37 +16,53 @@ export function getTypeDefs() {
   return typeDefs;
 }
 
-function authenticate(parent: any, args: any, context: any, _info: any) {
-  const koa = context.koa;
+async function authenticate(parent: any, args: any, context: any, _info: any) {
+  const id = context.koa.session.user_id;
 
-  if (!koa) {
-    throw new Error('Missing Koa context');
+  if (!id) {
+    throw new AuthenticationError('User is not authenticated!');
   }
 
-  // eslint-disable-next-line dot-notation
-  const tokenHeader = koa.request.headers['authorization'];
+  const user = await User.getById(id);
 
-  if (!tokenHeader) {
-    throw new Error('Missing authorization header');
+  logger().info('authenticated user', user);
+
+  context.user = user;
+}
+
+function assertUserLoggedOut(context: any) {
+  if (!context.koa.session.isNew && context.koa.session.user_id) {
+    throw new Error('User is already logged in');
   }
+}
 
-  const token = tokenHeader.replace('Bearer ', '');
+function createUserSession(context: any, user: User) {
+  context.koa.session.user_id = user.id;
 
-  context.user = User.fromAccessToken(token);
+  logger().info('saving session', { user_id: user.id });
+}
+
+function destroyUserSession(context: any) {
+  // TODO: Identify the session being destroyed
+  logger().info('destroying session');
+
+  context.koa.session = null;
 }
 
 export function getResolvers(): IResolvers {
   return {
     Query: {
-      currentUser(parent, args, context, info) {
-        authenticate(parent, args, context, info);
+      async currentUser(parent, args, context, info) {
+        await authenticate(parent, args, context, info);
 
         return context.user;
       },
     },
 
     Mutation: {
-      async register(parent, args, _context, _info) {
+      async register(parent, args, context, _info) {
+        assertUserLoggedOut(context);
+
         if (!args.name || !args.email || !args.password) {
           throw new UserInputError('Missing registration arguments', {
             missingArguments: _.difference(['name', 'email', 'password'], Object.keys(args)),
@@ -57,20 +70,21 @@ export function getResolvers(): IResolvers {
         }
 
         const user = new User({ name: args.name, email: args.email });
-        const accessToken = user.createAccessToken();
 
         await user.create(args.password);
 
-        return {
-          accessToken,
-          refreshToken: user.refreshToken,
-          user: user as User,
-        };
+        createUserSession(context, user);
+
+        return user as User;
       },
 
-      async login(parent, args, _context, _info) {
+      async login(parent, args, context, _info) {
+        assertUserLoggedOut(context);
+
         if (!args.name || !args.password) {
-          throw new AuthenticationError('Missing username or password');
+          throw new UserInputError('Missing username or password', {
+            missingArguments: _.difference(['name', 'password'], Object.keys(args)),
+          });
         }
 
         const user = await User.getByName(args.name);
@@ -80,37 +94,15 @@ export function getResolvers(): IResolvers {
           throw new AuthenticationError('Could not authenticate user');
         }
 
-        const accessToken = user.createAccessToken();
+        createUserSession(context, user);
 
-        return {
-          accessToken,
-          refreshToken: user.refreshToken,
-          user: user as User,
-        };
+        return user as User;
       },
 
-      async createAccessToken(_parent, args, _context, _info) {
-        if (!args.refreshToken) {
-          throw new UserInputError('Missing refresh token');
-        }
+      async logout(parent, args, context, _info) {
+        destroyUserSession(context);
 
-        try {
-          const user = User.fromRefreshToken(args.refreshToken);
-
-          return user.createAccessToken();
-        } catch (e) {
-          logger().error('Failed to refresh an access token', e);
-
-          if (e instanceof TokenTypeError) {
-            throw e;
-          } else if (e instanceof TokenExpiredError) {
-            throw new Error(`Token expired at ${e.expiredAt}. Please re-authenticate`);
-          } else if (e instanceof JsonWebTokenError) {
-            throw new Error('Error validating token');
-          } else {
-            throw e;
-          }
-        }
+        return true;
       },
     },
 

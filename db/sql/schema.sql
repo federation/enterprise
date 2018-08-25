@@ -26,11 +26,7 @@ CREATE TABLE enterprise.account (
 
   -- The user's Argon2 password hash.
   -- Computed as Argon2(Base64(SHA512(plain)))
-  password TEXT NOT NULL,
-
-  -- A JSON Web Token representation of the user's refresh token.
-  -- TODO: Should this be unique?
-  refresh_token TEXT
+  password TEXT NOT NULL
 );
 
 -- An employer.

@@ -7,7 +7,7 @@ interface Options {
 }
 
 interface Requirements {
-  readonly JWT_SECRET: string;
+  readonly COOKIE_SECRET: string;
   readonly WORK_DIR: string;
 }
 
@@ -27,14 +27,14 @@ export function getDefaultOptions(): Options {
 
 export function getTestEnvironment(): Environment {
   return {
-    JWT_SECRET: 'jwt-secret',
+    COOKIE_SECRET: 'cookie-secret',
     NODE_ENV: 'test',
   };
 }
 
 export function getRequiredOptions(): Array<string> {
   return [
-    'JWT_SECRET',
+    'COOKIE_SECRET',
     'WORK_DIR',
   ];
 }
@@ -43,7 +43,7 @@ export class Config implements Configuration {
   private environment: Environment;
 
   // Required
-  readonly JWT_SECRET: string;
+  readonly COOKIE_SECRET: string;
   readonly WORK_DIR: string;
 
   // Optional
@@ -57,7 +57,7 @@ export class Config implements Configuration {
     this.environment = environment;
 
     // Required
-    this.JWT_SECRET = this.env('JWT_SECRET');
+    this.COOKIE_SECRET = this.env('COOKIE_SECRET');
     this.WORK_DIR = this.env('WORK_DIR', process.cwd);
 
     // Optional
