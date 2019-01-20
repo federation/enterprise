@@ -4,6 +4,7 @@ interface Options {
   readonly PORT: number;
   readonly HOST: string;
   readonly NODE_ENV: string;
+  readonly REDIS: string;
 }
 
 interface Requirements {
@@ -22,6 +23,7 @@ export function getDefaultOptions(): Options {
     PORT: 8080,
     HOST: '0.0.0.0',
     NODE_ENV: 'development',
+    REDIS: '',
   };
 }
 
@@ -50,6 +52,7 @@ export class Config implements Configuration {
   readonly PORT: number;
   readonly HOST: string;
   readonly NODE_ENV: string;
+  readonly REDIS: string;
 
   constructor(environment: Environment) {
     const defaultOptions = getDefaultOptions();
@@ -64,6 +67,7 @@ export class Config implements Configuration {
     this.PORT = parseInt(this.env('PORT', defaultOptions.PORT));
     this.HOST = this.env('HOST', defaultOptions.HOST);
     this.NODE_ENV = this.env('NODE_ENV', defaultOptions.NODE_ENV);
+    this.REDIS = this.env('REDIS', defaultOptions.REDIS);
   }
 
   private env(key: string, orDefault?: (() => any) | any) {

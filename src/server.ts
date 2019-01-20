@@ -4,8 +4,11 @@ import koaLogger from 'koa-logger';
 import koaSession from 'koa-session';
 import { ServerRegistration } from 'apollo-server-koa';
 
+import _ from 'lodash';
+
 import { logger } from './logger';
 import { config } from './config';
+import { client as redis } from './redis';
 
 import * as graphQL from './routes/graphql';
 
@@ -67,6 +70,35 @@ export function server() {
     // (boolean) renew session when session is nearly expired, so we can always
     // keep user logged in. (default is false)
     renew: false,
+
+    prefix: 'enterprise.sessions.',
+
+    store: {
+      async get(key: string, maxAge: number, options: { rolling: boolean }) {
+        logger().info('Getting session', { key });
+
+        const session = await redis().hmgetall(key);
+
+        return session;
+      },
+
+      async set(key: string, session: any, maxAge: number, options: { rolling: boolean, changed: boolean }) {
+        const sessionKeys = ['user_id'];
+        const safeSession = _.pick(session, sessionKeys);
+
+        logger().info('Setting session', { key, session: safeSession });
+
+        await redis().HMSETAsync(key, safeSession);
+
+        // TODO: Set EXPIRE?
+      },
+
+      async destroy(key: any) {
+        logger().info('Destroying session from Redis', { key });
+
+        await redis().delAsync(key);
+      },
+    },
   };
 
   app.on('session:missed', () => {
