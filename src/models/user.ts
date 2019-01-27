@@ -36,6 +36,8 @@ export class User implements Properties {
   name?: string;
   email?: string;
 
+  // TODO: Preferably this password shouldn't be stored as a field, or it should
+  // be cleared as soon as possible? Should this be cleared by User.authenticate()?
   password?: string;
   createdAt?: Date;
 
@@ -86,6 +88,9 @@ export class User implements Properties {
     }
 
     const normalizedPassword = User.normalizePassword(plainPassword);
+
+    // TODO: Get the password at authentication time, ephemerally, then discard
+    // both the password and the plaintext?
 
     // TODO: delete this.password; on success?
     return argon2.verify(this.password, normalizedPassword);
