@@ -169,6 +169,7 @@
     "spaced-comment": ["error"],
     "strict": ["error", "global"],
     "template-curly-spacing": ["error", "never"],
+    "typescript/no-unused-vars": ["error"],
     "unicode-bom": ["error", "never"],
     "valid-jsdoc": ["error"],
     "wrap-iife": ["error"],
