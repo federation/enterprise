@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
@@ -11,8 +13,6 @@ import (
 
 func main() {
 	log := logrus.New()
-
-	log.Out = os.Stdout
 
 	log.WithFields(logrus.Fields{
 		"animal": "walrus",
@@ -38,8 +38,22 @@ func main() {
 		GraphiQL: true,
 	})
 
-	http.Handle("/graphql", graphqlHandler)
+	serveMux := http.NewServeMux()
+	serveMux.Handle("/graphql", graphqlHandler)
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: serveMux,
+	}
+
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		log.Info("Shutting down server")
+		server.Close()
+	}()
 
 	log.Info("Starting the server")
-	http.ListenAndServe(":8080", nil)
+	server.ListenAndServe()
 }
