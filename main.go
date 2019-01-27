@@ -9,10 +9,25 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
 	log := logrus.New()
+
+	viper.SetConfigName("enterprise")
+	viper.AddConfigPath(".")
+
+	viper.SetDefault("ENTERPRISE_WEB", "/tmp")
+
+	switch err := viper.MergeInConfig().(type) {
+	case nil:
+		log.Info("Configuration file loaded")
+	case viper.ConfigFileNotFoundError:
+		log.Info("No configuration loaded")
+	default:
+		log.Panicf("Problem reading the configuration file: %s\n", err)
+	}
 
 	log.WithFields(logrus.Fields{
 		"animal": "walrus",
