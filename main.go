@@ -65,10 +65,19 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		log.Info("Shutting down server")
 		server.Close()
 	}()
 
 	log.Info("Starting the server")
-	server.ListenAndServe()
+
+	err := server.ListenAndServe()
+
+	switch err {
+	case http.ErrServerClosed:
+		log.Info("Server has been closed")
+	case nil:
+		log.Info("Server is shutting down")
+	default:
+		log.Panicf("There was a problem starting the server: %s\n", err)
+	}
 }
