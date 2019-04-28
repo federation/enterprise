@@ -1,15 +1,15 @@
 package main
 
 import (
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
+	"github.com/99designs/gqlgen/handler"
+	"github.com/federation/enterprise"
 )
 
 func main() {
@@ -34,27 +34,9 @@ func main() {
 		"size":   10,
 	}).Info("A group of walrus emerges from the ocean")
 
-	fields := graphql.Fields{
-		"hello": &graphql.Field{
-			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "world", nil
-			},
-		},
-	}
-	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(rootQuery)}
-
-	var schema, _ = graphql.NewSchema(schemaConfig)
-
-	graphqlHandler := handler.New(&handler.Config{
-		Schema:   &schema,
-		Pretty:   true,
-		GraphiQL: true,
-	})
-
 	serveMux := http.NewServeMux()
-	serveMux.Handle("/graphql", graphqlHandler)
+	serveMux.Handle("/graphiql", handler.Playground("GraphQL playground", "/graphql"))
+	serveMux.Handle("/graphql", handler.GraphQL(enterprise.NewExecutableSchema(enterprise.Config{Resolvers: &enterprise.Resolver{}})))
 
 	server := &http.Server{
 		Addr:    ":8080",
@@ -65,7 +47,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		server.Close()
+		_ = server.Close()
 	}()
 
 	log.Info("Starting the server")

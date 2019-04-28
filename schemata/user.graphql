@@ -1,0 +1,35 @@
+"A user."
+type User {
+  "Unique identifier for the user."
+  id: ID!
+
+  "The creation date."
+  createdAt: String!
+
+  "The user's name."
+  name: String!
+
+  "The user's email address."
+  email: String!
+}
+
+extend type Query {
+  """
+  Get the currently authenticated user.
+
+  The user is expected to be authenticated.
+  """
+  currentUser: User
+}
+
+extend type Mutation {
+  "Register a new user."
+  register(name: String!, email: String!, password: String!): User
+
+  "Create a user session."
+  login(name: String!, password: String!): User
+
+  "Destroy a user session."
+  logout: Boolean
+}
+

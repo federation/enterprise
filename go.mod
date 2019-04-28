@@ -1,10 +1,9 @@
 module github.com/federation/enterprise
 
 require (
-	github.com/graphql-go/graphql v0.7.7
-	github.com/graphql-go/handler v0.2.3
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/99designs/gqlgen v0.8.3
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/sirupsen/logrus v1.3.0
 	github.com/spf13/viper v1.3.1
-	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/vektah/gqlparser v1.1.2
 )
