@@ -1,4 +1,4 @@
-FROM golang:1.12.4-alpine AS dependencies
+FROM golang:1.13-alpine AS dependencies
 ENV GO111MODULE=on
 WORKDIR /app
 COPY go.mod .

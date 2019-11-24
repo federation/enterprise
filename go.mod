@@ -7,3 +7,5 @@ require (
 	github.com/spf13/viper v1.3.1
 	github.com/vektah/gqlparser v1.1.2
 )
+
+go 1.13
