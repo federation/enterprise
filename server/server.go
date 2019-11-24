@@ -35,7 +35,7 @@ func main() {
 	}).Info("A group of walrus emerges from the ocean")
 
 	serveMux := http.NewServeMux()
-	serveMux.Handle("/graphiql", handler.Playground("GraphQL playground", "/graphql"))
+	serveMux.Handle("/graphiql", handler.Playground("GraphQL playground", "/api/graphql"))
 	serveMux.Handle("/graphql", handler.GraphQL(enterprise.NewExecutableSchema(enterprise.Config{Resolvers: &enterprise.Resolver{}})))
 
 	server := &http.Server{
