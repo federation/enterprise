@@ -1,6 +1,5 @@
-*
-!Dockerfile
-!package.json
-!yarn.lock
-!src/
-!tsconfig.json
+enterprise
+node_modules
+build
+coverage
+logs

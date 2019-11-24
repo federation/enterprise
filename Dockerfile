@@ -1,35 +1,21 @@
-# This layer installs production dependencies.
-FROM node:10.1.0-alpine AS dependencies
-WORKDIR /usr/src/app
-
-COPY package.json ./
-COPY yarn.lock ./
-
-# Install dependencies in a reproducible manner
-RUN apk add --no-cache --virtual .build-deps make gcc g++ python \
-  && yarn install --frozen-lockfile --production \
+FROM golang:1.12.4-alpine AS dependencies
+ENV GO111MODULE=on
+WORKDIR /app
+COPY go.mod .
+COPY go.sum .
+RUN apk add --no-cache --virtual .build-deps git \
+  && go mod download \
   && apk del .build-deps
 
-# This layer further adds dev dependencies and compiles TypeScript.
 FROM dependencies AS builder
+COPY gqlgen.yml gqlgen.yml
+COPY schemata/ schemata/
+COPY server/ server/
+COPY *.go ./
+RUN go build -o enterprise server/server.go
 
-# Add dev dependencies before copying the source files to prevent
-# it from unnecessarily re-running when those files have been modified,
-# since they depend on package.json and yarn.lock, not the source files.
-RUN yarn install --frozen-lockfile
-
-COPY tsconfig.json ./
-COPY src/ ./src/
-
-RUN yarn run build
-
-# Reset to production dependencies-only and copy the
-# compiled TypeScript application.
-FROM dependencies
-WORKDIR /usr/src/app
-
-COPY --from=builder /usr/src/app/build/ ./build
-
+FROM alpine
+WORKDIR /app
+COPY --from=builder /app/enterprise enterprise
 EXPOSE 8080
-
-CMD [ "node", "./build/index.js" ]
+ENTRYPOINT /app/enterprise
