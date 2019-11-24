@@ -308,7 +308,7 @@ CREATE TABLE enterprise.opportunity_document (
   description TEXT,
 
   -- The document's binary content.
-  content bytea,
+  content BYTEA,
 
   CONSTRAINT valid_document_mime_type
   CHECK (content IS NULL OR mime_type IS NOT NULL),
